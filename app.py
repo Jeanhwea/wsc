@@ -207,9 +207,14 @@ class PropKeyEnum(enum.StrEnum):
     G1_FILE_01 = "G1_PNG_01"
     G1_FILE_02 = "G1_PNG_02"
     G1_FILE_03 = "G1_PNG_03"
-    G2_FILE_01 = "G1_JSON_F01"
-    G2_FILE_02 = "G1_JSON_F02"
-    G2_FILE_03 = "G1_JSON_F03"
+    G2_FILE_01 = "G2_JSON_F01"
+    G2_FILE_02 = "G2_JSON_F02"
+    G2_FILE_03 = "G2_JSON_F03"
+    G3_OPT_TYP = "G3_OPT_TYPE"
+    G3_OPT_NUM = "G3_OPT_NUMBER"
+    G4_FILE_01 = "G4_FILE_01"
+    G4_FILE_02 = "G4_FILE_02"
+    G4_IS_TUTOR = "G4_IS_TUTOR"
 
 
 class WaterSortConfigWidget(QWidget):
@@ -291,10 +296,14 @@ class WaterSortConfigWidget(QWidget):
         selector = JxOptionSelector(
             options=LastLevelCondOptionList, init_value=LastLevelCondEnum.E00, parent=self
         )
+        selector.currentValueChanged.connect(
+            lambda value, key=PropKeyEnum.G3_OPT_TYP: self._set_props(key, value)
+        )
         layout.addRow("结束条件类型", selector)
 
         edit01 = JxSpinBox(self)
         edit01.setRange(0, 99)
+        edit01.valueChanged.connect(lambda value, key=PropKeyEnum.G3_OPT_NUM: self._set_props(key, value))
         layout.addRow("n 值", edit01)
 
         return group
@@ -304,12 +313,19 @@ class WaterSortConfigWidget(QWidget):
         layout = QFormLayout(parent=group)
 
         edit01 = JxFileLocationEdit(desc=None, suffix="png", parent=self)
+        edit01.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G4_FILE_01: self._set_props(key, value)
+        )
         layout.addRow("结束页", edit01)
 
         edit02 = JxFileLocationEdit(desc=None, suffix="png", parent=self)
+        edit02.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G4_FILE_02: self._set_props(key, value)
+        )
         layout.addRow("下载按钮图片", edit02)
 
         check = JxRadioButton(parent=self)
+        check.clicked.connect(lambda state, key=PropKeyEnum.G4_IS_TUTOR: self._set_props(key, value=state))
         layout.addRow("是否有新手", check)
 
         return group
