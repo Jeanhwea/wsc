@@ -305,6 +305,13 @@ class DataCollector:
 
         return True
 
+    def check_level_count(self, props: Dict[PropKeyEnum, Any]):
+        count_level = self.get_level_count(props)
+        if count_level == 0:
+            QMessageBox.warning(None, "错误", f"必须配置至少 1 个关卡")
+            return False
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
@@ -313,6 +320,9 @@ class DataCollector:
             return False
 
         if not self.check_level_file(props):
+            return False
+
+        if not self.check_level_count(props):
             return False
 
         return True
