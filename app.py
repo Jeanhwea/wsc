@@ -227,6 +227,17 @@ class JxRadioButton(QRadioButton):
 
 
 class DataCollector:
+    _ASSET_INIT = {
+        PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}",
+        PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}",
+        PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}",
+        PropKeyEnum.G2_FILE_01: "1-1",
+        PropKeyEnum.G2_FILE_02: "2-1",
+        PropKeyEnum.G2_FILE_03: "3-1",
+        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}",
+        PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}",
+    }
+
     _ASSET_LIST = {
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
         PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
@@ -283,7 +294,6 @@ class DataCollector:
             props.get(PropKeyEnum.G2_FILE_02),
             props.get(PropKeyEnum.G2_FILE_03),
         ]
-        print(data)
 
         end = False
         for i, path in enumerate(data):
@@ -326,7 +336,24 @@ class DataCollector:
     def get_path_value(self, props: Dict[PropKeyEnum, Any], key: PropKeyEnum) -> str:
         if props.get(key) is None or not os.path.exists(props.get(key)):
             return ""
-        return self._ASSET_LIST[key]
+        return self._ASSET_INIT[key]
+
+    @staticmethod
+    def get_level_count(props: Dict[PropKeyEnum, Any]):
+        data = [
+            props.get(PropKeyEnum.G2_FILE_01),
+            props.get(PropKeyEnum.G2_FILE_02),
+            props.get(PropKeyEnum.G2_FILE_03),
+        ]
+
+        count = 0
+        for i, path in enumerate(data):
+            if path is None or len(path) == 0:
+                continue
+
+            count += 1
+
+        return count
 
     def store_config(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         config_file = os.path.join(target_dir, "GameConfig.json")
@@ -335,6 +362,7 @@ class DataCollector:
         exp_config["LevelData"][0]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_01)
         exp_config["LevelData"][1]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_02)
         exp_config["LevelData"][2]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_03)
+        exp_config["LevelLength"] = self.get_level_count(props)
 
         exp_config["LevelData"][0]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_01)
         exp_config["LevelData"][1]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_02)
