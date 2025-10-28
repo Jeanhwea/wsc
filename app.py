@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import enum
 import sys
 import os
@@ -6,7 +7,6 @@ from typing import Dict, List, Any
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
-    QDoubleSpinBox,
     QVBoxLayout,
     QWidget,
     QHBoxLayout,
@@ -119,15 +119,15 @@ class JxFileLocationEdit(QWidget):
     _layout: QHBoxLayout
     _location: QLineEdit
 
-    def __init__(self, desc, *args, **kwargs):
+    def __init__(self, desc, suffix=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desc = desc
+        self._suffix = suffix
         self._location = QLineEdit(self)
         self._layout = QHBoxLayout(self)
         self._initUI()
 
     def _initUI(self):
-        # self.setFixedWidth(200)
         layout = self._layout
         layout.setContentsMargins(0, 0, 0, 0)
 
@@ -147,7 +147,7 @@ class JxFileLocationEdit(QWidget):
         self._layout.addWidget(edit_dir, 8)
 
     def on_btn_open_dir_clicked(self):
-        path = JxFileDialog.open_single_file()
+        path = JxFileDialog.open_single_file(filter=f"File (*.{self._suffix})")
         if path:
             self.set_location(path)
 
@@ -203,9 +203,18 @@ class JxRadioButton(QRadioButton):
         super().__init__(*args, **kwargs)
 
 
+class PropKeyEnum(enum.StrEnum):
+    G1_FILE_01 = "G1_PNG_01"
+    G1_FILE_02 = "G1_PNG_02"
+    G1_FILE_03 = "G1_PNG_03"
+    G2_FILE_01 = "G1_JSON_F01"
+    G2_FILE_02 = "G1_JSON_F02"
+    G2_FILE_03 = "G1_JSON_F03"
+
+
 class WaterSortConfigWidget(QWidget):
     _layout: QVBoxLayout
-    _props: Dict[str, Any]
+    _props: Dict[PropKeyEnum, Any]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -231,13 +240,22 @@ class WaterSortConfigWidget(QWidget):
         group = QGroupBox("1. 标题图片")
         layout = QVBoxLayout(group)
 
-        edit01 = JxFileLocationEdit(desc="关卡1：", parent=self)
+        edit01 = JxFileLocationEdit(desc="关卡1：", suffix="png", parent=self)
+        edit01.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G1_FILE_01: self._set_props(key, value)
+        )
         layout.addWidget(edit01)
 
-        edit02 = JxFileLocationEdit(desc="关卡2：", parent=self)
+        edit02 = JxFileLocationEdit(desc="关卡2：", suffix="png", parent=self)
+        edit02.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G1_FILE_02: self._set_props(key, value)
+        )
         layout.addWidget(edit02)
 
-        edit03 = JxFileLocationEdit(desc="关卡3：", parent=self)
+        edit03 = JxFileLocationEdit(desc="关卡3：", suffix="png", parent=self)
+        edit03.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G1_FILE_03: self._set_props(key, value)
+        )
         layout.addWidget(edit03)
 
         return group
@@ -246,13 +264,22 @@ class WaterSortConfigWidget(QWidget):
         group = QGroupBox("2. 关卡文件")
         layout = QVBoxLayout(group)
 
-        edit01 = JxFileLocationEdit(desc="关卡1：", parent=self)
+        edit01 = JxFileLocationEdit(desc="关卡1：", suffix="json", parent=self)
+        edit01.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G2_FILE_01: self._set_props(key, value)
+        )
         layout.addWidget(edit01)
 
-        edit02 = JxFileLocationEdit(desc="关卡2：", parent=self)
+        edit02 = JxFileLocationEdit(desc="关卡2：", suffix="json", parent=self)
+        edit02.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G2_FILE_02: self._set_props(key, value)
+        )
         layout.addWidget(edit02)
 
-        edit03 = JxFileLocationEdit(desc="关卡3：", parent=self)
+        edit03 = JxFileLocationEdit(desc="关卡3：", suffix="json", parent=self)
+        edit03.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G2_FILE_03: self._set_props(key, value)
+        )
         layout.addWidget(edit03)
 
         return group
@@ -276,10 +303,10 @@ class WaterSortConfigWidget(QWidget):
         group = QGroupBox("4. 其他确认项")
         layout = QFormLayout(parent=group)
 
-        edit01 = JxFileLocationEdit(desc=None, parent=self)
+        edit01 = JxFileLocationEdit(desc=None, suffix="png", parent=self)
         layout.addRow("结束页", edit01)
 
-        edit02 = JxFileLocationEdit(desc=None, parent=self)
+        edit02 = JxFileLocationEdit(desc=None, suffix="png", parent=self)
         layout.addRow("下载按钮图片", edit02)
 
         check = JxRadioButton(parent=self)
@@ -291,10 +318,21 @@ class WaterSortConfigWidget(QWidget):
         layout = QHBoxLayout()
         layout.addStretch()
 
+        btn_debug_props = QPushButton("調試", parent=self)
+        btn_debug_props.clicked.connect(self._on_dbg_btn_clicked)
+        layout.addWidget(btn_debug_props)
+
         btn_export_data = QPushButton("导出", parent=self)
         layout.addWidget(btn_export_data)
 
         return layout
+
+    def _set_props(self, key: str, value: Any):
+        self._props.update({key: value})
+        print(f"Update Props: {key=}, {value=}")
+
+    def _on_dbg_btn_clicked(self):
+        print(f"{self._props=}")
 
 
 class WaterSortConfigApp(QApplication):
