@@ -1,4 +1,5 @@
 import sys
+import os
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -6,6 +7,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QHBoxLayout,
+    QFileDialog,
+    QLabel,
+    QPushButton,
+    QLineEdit,
+    QGroupBox,
 )
 
 _LAST_OPEN_DIR = None
@@ -48,7 +54,7 @@ class JxFileDialog(QFileDialog):
     @staticmethod
     def open_single_file(caption=None, filter="All Files (*.*)"):
         if caption is None:
-            caption = t(TextKey.DLOG_FILE_SINGLE_FILE)
+            caption = "打开文件"
 
         directory = JxFileDialog._get_last_open_dir()
         file_path, _ = JxFileDialog.getOpenFileName(None, caption, directory, filter)
@@ -60,7 +66,7 @@ class JxFileDialog(QFileDialog):
     @staticmethod
     def open_single_dir(caption=None, init_dir=None):
         if caption is None:
-            caption = t(TextKey.DLOG_FILE_SINGLE_DIR)
+            caption = "打开文件夹"
 
         directory = init_dir or JxFileDialog._get_last_open_dir()
         file_path = JxFileDialog.getExistingDirectory(None, caption, directory)
@@ -72,7 +78,7 @@ class JxFileDialog(QFileDialog):
     @staticmethod
     def save_single_file(caption=None, filter="All Files (*.*)", default_filename=None):
         if caption is None:
-            caption = t(TextKey.DLOG_FILE_SAVE_FILE)
+            caption = "保存文件"
 
         directory = JxFileDialog._get_last_open_dir()
         if default_filename is not None:
@@ -88,24 +94,26 @@ class JxFileDialog(QFileDialog):
 class FileLocationEdit(QWidget):
     _layout: QHBoxLayout
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, desc, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._desc = kwargs.get("desc", "???")
+        self._desc = desc or "???"
         self._layout = QHBoxLayout(self)
         self._initUI()
 
     def _initUI(self):
+        # self.setFixedWidth(200)
+
         self._layout.addWidget(QLabel(self._desc))
 
-        btn_open_dir = QPushButton(self, "选择文件")
-        self._layout.addWidget(btn_open_dir)
+        btn_open_dir = QPushButton("选择文件", parent=self)
+        self._layout.addWidget(btn_open_dir, 1)
 
-        btn_open_cls = QPushButton(self, "清空文件")
-        self._layout.addWidget(btn_open_cls)
+        btn_open_cls = QPushButton("清空文件", parent=self)
+        self._layout.addWidget(btn_open_cls, 1)
 
         edit_dir = QLineEdit(self)
         edit_dir.setReadOnly(True)
-        self._layout.addWidget(edit_dir)
+        self._layout.addWidget(edit_dir, 8)
 
 
 class WaterSortConfigWidget(QWidget):
@@ -118,23 +126,37 @@ class WaterSortConfigWidget(QWidget):
 
     def initUI(self):
         self.setWindowTitle("水排序工具")
-        self.setGeometry(300, 300, 300, 100)
+        self.setGeometry(300, 300, 600, 300)
 
-        self.create_group_01()
+        layout = self._layout
+
+        layout.addWidget(self.create_group_01())
 
     def create_group_01(self):
         group = QGroupBox("标题图片")
         layout = QVBoxLayout(group)
 
-        edit01 = WaterSortConfigWidget(self)
+        edit01 = FileLocationEdit(desc="关卡1", parent=self)
         layout.addWidget(edit01)
 
         return group
 
 
 class WaterSortConfigApp(QApplication):
+
     def __init__(self):
         super().__init__(sys.argv)
         self.wsc = WaterSortConfigWidget()
         self.wsc.show()
+
+    def run(self):
         sys.exit(self.exec())
+
+
+def main():
+    app = WaterSortConfigApp()
+    app.run()
+
+
+if __name__ == "__main__":
+    main()
