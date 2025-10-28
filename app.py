@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import enum
 import json
 import shutil
@@ -24,6 +25,20 @@ from PySide6.QtWidgets import (
     QSpinBox,
     QRadioButton,
 )
+
+
+class PropKeyEnum(enum.StrEnum):
+    G1_FILE_01 = "G1_PNG_01"
+    G1_FILE_02 = "G1_PNG_02"
+    G1_FILE_03 = "G1_PNG_03"
+    G2_FILE_01 = "G2_JSON_F01"
+    G2_FILE_02 = "G2_JSON_F02"
+    G2_FILE_03 = "G2_JSON_F03"
+    G3_OPT_TYP = "G3_OPT_TYPE"
+    G3_OPT_NUM = "G3_OPT_NUMBER"
+    G4_FILE_01 = "G4_FILE_01"
+    G4_FILE_02 = "G4_FILE_02"
+    G4_IS_TUTOR = "G4_IS_TUTOR"
 
 
 class LastLevelCondEnum(enum.StrEnum):
@@ -209,20 +224,6 @@ class JxRadioButton(QRadioButton):
         super().__init__(*args, **kwargs)
 
 
-class PropKeyEnum(enum.StrEnum):
-    G1_FILE_01 = "G1_PNG_01"
-    G1_FILE_02 = "G1_PNG_02"
-    G1_FILE_03 = "G1_PNG_03"
-    G2_FILE_01 = "G2_JSON_F01"
-    G2_FILE_02 = "G2_JSON_F02"
-    G2_FILE_03 = "G2_JSON_F03"
-    G3_OPT_TYP = "G3_OPT_TYPE"
-    G3_OPT_NUM = "G3_OPT_NUMBER"
-    G4_FILE_01 = "G4_FILE_01"
-    G4_FILE_02 = "G4_FILE_02"
-    G4_IS_TUTOR = "G4_IS_TUTOR"
-
-
 class DataCollector:
     _ASSET_LIST = {
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
@@ -298,10 +299,15 @@ class DataCollector:
         shutil.copyfile(src, dst)
 
     @staticmethod
-    def store_config(target_dir: PathLike):
+    def store_config(props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         config_file = os.path.join(target_dir, "GameConfig.json")
+        exp_config = copy.deepcopy(_CONFIG_TEMPLATE)
+        exp_config["ResultJumpType"] = f"{props.get(PropKeyEnum.G3_OPT_TYP, LastLevelCondEnum.E00)}"
+        exp_config["ResultJumpNumber"] = props.get(PropKeyEnum.G3_OPT_NUM, 0)
+        exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTOR, True)
+
         with open(config_file, "w") as f:
-            json.dump(_CONFIG_TEMPLATE, f, indent=4, ensure_ascii=False)
+            json.dump(exp_config, f, indent=4, ensure_ascii=False)
 
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         for key, value in self._ASSET_LIST.items():
@@ -311,7 +317,7 @@ class DataCollector:
                 name=value,
             )
 
-        self.store_config(target_dir)
+        self.store_config(props, target_dir)
 
     def echo(self):
         QMessageBox.information(None, "成功", f"{self._ASSET_LIST}")
@@ -440,6 +446,7 @@ class WaterSortConfigWidget(QWidget):
 
         check = JxRadioButton(parent=self)
         check.clicked.connect(lambda state, key=PropKeyEnum.G4_IS_TUTOR: self._set_props(key, value=state))
+        check.setChecked(True)
         layout.addRow("是否有新手", check)
 
         return group
