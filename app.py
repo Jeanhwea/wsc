@@ -153,7 +153,9 @@ class JxFileLocationEdit(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
 
         if self._desc:
-            self._layout.addWidget(QLabel(self._desc))
+            label = QLabel(self._desc)
+            label.setFixedWidth(32)
+            self._layout.addWidget(label)
 
         btn_open_dir = QPushButton("选择文件", parent=self)
         self._layout.addWidget(btn_open_dir, 1)
@@ -225,6 +227,17 @@ class JxRadioButton(QRadioButton):
 
 
 class DataCollector:
+    _ASSET_INIT = {
+        PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}",
+        PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}",
+        PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}",
+        PropKeyEnum.G2_FILE_01: "1-1",
+        PropKeyEnum.G2_FILE_02: "2-1",
+        PropKeyEnum.G2_FILE_03: "3-1",
+        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}",
+        PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}",
+    }
+
     _ASSET_LIST = {
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
         PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
@@ -274,11 +287,42 @@ class DataCollector:
 
         return True
 
+    @staticmethod
+    def check_level_file(props: Dict[PropKeyEnum, Any]):
+        data = [
+            props.get(PropKeyEnum.G2_FILE_01),
+            props.get(PropKeyEnum.G2_FILE_02),
+            props.get(PropKeyEnum.G2_FILE_03),
+        ]
+
+        end = False
+        for i, path in enumerate(data):
+            if path is None or len(path) == 0:
+                end = True
+            if end and not (path is None or len(path) == 0):
+                QMessageBox.warning(None, "错误", f"必须配置连续的关卡，不可中断")
+                return False
+
+        return True
+
+    def check_level_count(self, props: Dict[PropKeyEnum, Any]):
+        count_level = self.get_level_count(props)
+        if count_level == 0:
+            QMessageBox.warning(None, "错误", f"必须配置至少 1 个关卡")
+            return False
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
 
         if not self.check_file_exist(props):
+            return False
+
+        if not self.check_level_file(props):
+            return False
+
+        if not self.check_level_count(props):
             return False
 
         return True
@@ -292,18 +336,53 @@ class DataCollector:
 
         return dir_path
 
-    def copy_file(self, src: PathLike, target_dir: PathLike, name: str):
+    @staticmethod
+    def copy_file(src: PathLike, target_dir: PathLike, name: str):
         if src is None or not os.path.exists(src):
             return
         dst = os.path.join(target_dir, f"{name}")
         shutil.copyfile(src, dst)
 
+    def get_path_value(self, props: Dict[PropKeyEnum, Any], key: PropKeyEnum) -> str:
+        if props.get(key) is None or not os.path.exists(props.get(key)):
+            return ""
+        return self._ASSET_INIT[key]
+
     @staticmethod
-    def store_config(props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+    def get_level_count(props: Dict[PropKeyEnum, Any]):
+        data = [
+            props.get(PropKeyEnum.G2_FILE_01),
+            props.get(PropKeyEnum.G2_FILE_02),
+            props.get(PropKeyEnum.G2_FILE_03),
+        ]
+
+        count = 0
+        for i, path in enumerate(data):
+            if path is None or len(path) == 0:
+                continue
+
+            count += 1
+
+        return count
+
+    def store_config(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         config_file = os.path.join(target_dir, "GameConfig.json")
         exp_config = copy.deepcopy(_CONFIG_TEMPLATE)
+
+        exp_config["LevelData"][0]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_01)
+        exp_config["LevelData"][1]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_02)
+        exp_config["LevelData"][2]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_03)
+        exp_config["LevelLength"] = self.get_level_count(props)
+
+        exp_config["LevelData"][0]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_01)
+        exp_config["LevelData"][1]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_02)
+        exp_config["LevelData"][2]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_03)
+
         exp_config["ResultJumpType"] = f"{props.get(PropKeyEnum.G3_OPT_TYP, LastLevelCondEnum.E00)}"
         exp_config["ResultJumpNumber"] = props.get(PropKeyEnum.G3_OPT_NUM, 0)
+        exp_config["ResultJumpImageURL"] = self.get_path_value(props, PropKeyEnum.G4_FILE_01)
+
+        exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_02)
         exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTOR, True)
 
         with open(config_file, "w") as f:
