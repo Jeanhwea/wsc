@@ -65,12 +65,14 @@ class JxFileDialog(QFileDialog):
 
     @staticmethod
     def _get_last_open_dir():
+        global _LAST_OPEN_DIR
         if _LAST_OPEN_DIR:
             return _LAST_OPEN_DIR
         return os.getcwd()
 
     @staticmethod
     def _set_last_open_dir(path):
+        global _LAST_OPEN_DIR
         _LAST_OPEN_DIR = path
 
     @staticmethod
@@ -229,7 +231,8 @@ class WaterSortConfigWidget(QWidget):
 
     def initUI(self):
         self.setWindowTitle("水排序配置制作工具")
-        self.setGeometry(100, 100, 600, 200)
+        self.setMinimumWidth(600)
+        # self.setGeometry(100, 100, 600, 200)
 
         layout = self._layout
 
@@ -237,9 +240,8 @@ class WaterSortConfigWidget(QWidget):
         layout.addWidget(self._init_group_02())
         layout.addWidget(self._init_group_03())
         layout.addWidget(self._init_group_04())
-        layout.addLayout(self._init_operation_area())
-
         layout.addStretch()
+        layout.addLayout(self._init_operation_area())
 
     def _init_group_01(self):
         group = QGroupBox("1. 标题图片")
