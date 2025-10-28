@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QDoubleSpinBox,
     QVBoxLayout,
     QWidget,
+    QHBoxLayout,
 )
 
 _LAST_OPEN_DIR = None
@@ -84,9 +85,35 @@ class JxFileDialog(QFileDialog):
         return file_path
 
 
+class FileLocationEdit(QWidget):
+    _layout: QHBoxLayout
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._desc = kwargs.get("desc", "???")
+        self._layout = QHBoxLayout(self)
+        self._initUI()
+
+    def _initUI(self):
+        self._layout.addWidget(QLabel(self._desc))
+
+        btn_open_dir = QPushButton(self, "选择文件")
+        self._layout.addWidget(btn_open_dir)
+
+        btn_open_cls = QPushButton(self, "清空文件")
+        self._layout.addWidget(btn_open_cls)
+
+        edit_dir = QLineEdit(self)
+        edit_dir.setReadOnly(True)
+        self._layout.addWidget(edit_dir)
+
+
 class WaterSortConfigWidget(QWidget):
+    _layout: QHBoxLayout
+
     def __init__(self):
         super().__init__()
+        self._layout = QHBoxLayout(self)
         self.initUI()
 
     def initUI(self):
