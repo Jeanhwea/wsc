@@ -7,6 +7,7 @@ from typing import Dict, List, Any
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
+    QMessageBox,
     QVBoxLayout,
     QWidget,
     QHBoxLayout,
@@ -154,7 +155,7 @@ class JxFileLocationEdit(QWidget):
             self.set_location(path)
 
     def on_btn_open_cls_clicked(self):
-        self.set_location("")
+        self.set_location(None)
 
     def set_location(self, path):
         self._location.setText(path)
@@ -219,14 +220,84 @@ class PropKeyEnum(enum.StrEnum):
     G4_IS_TUTOR = "G4_IS_TUTOR"
 
 
+class DataCollector:
+    _ASSET_LIST = {
+        PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
+        PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
+        PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}.png",
+        PropKeyEnum.G2_FILE_01: "lv1-1.json",
+        PropKeyEnum.G2_FILE_02: "lv2-1.json",
+        PropKeyEnum.G2_FILE_03: "lv3-1.json",
+        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}.png",
+        PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
+    }
+
+    _ERROR_MSG = {
+        PropKeyEnum.G1_FILE_01: "1. 标题图片/关卡1",
+        PropKeyEnum.G1_FILE_02: "1. 标题图片/关卡2",
+        PropKeyEnum.G1_FILE_03: "1. 标题图片/关卡3",
+        PropKeyEnum.G2_FILE_01: "2. 关卡文件/关卡1",
+        PropKeyEnum.G2_FILE_02: "2. 关卡文件/关卡2",
+        PropKeyEnum.G2_FILE_03: "2. 关卡文件/关卡3",
+        PropKeyEnum.G3_OPT_TYP: "3. 最后一关的结束条件/结束条件类型",
+        PropKeyEnum.G3_OPT_NUM: "3. 最后一关的结束条件/n 值",
+        PropKeyEnum.G4_FILE_01: "4. 其他确认项/结束页",
+        PropKeyEnum.G4_FILE_02: "4. 其他确认项/下载按钮图片",
+        PropKeyEnum.G4_IS_TUTOR: "4. 其他确认项/是否有新手",
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def check_file_exist(self, props: Dict[PropKeyEnum, Any]):
+        for key in self._ASSET_LIST.keys():
+            path = props.get(key)
+            if path is not None and path != "" and not os.path.exists(path):
+                QMessageBox.warning(None, "错误", f"参数【{self._ERROR_MSG[key]} 】的文件已删除")
+                return False
+
+        return True
+
+    def check_n_value(self, props: Dict[PropKeyEnum, Any]):
+        opt_type = props.get(PropKeyEnum.G3_OPT_TYP, LastLevelCondEnum.E00)
+        opt_n_value = props.get(PropKeyEnum.G3_OPT_NUM, 0)
+
+        if opt_type != LastLevelCondEnum.E00 and opt_n_value == 0:
+            QMessageBox.warning(
+                None, "错误", f"参数【{self._ERROR_MSG[PropKeyEnum.G3_OPT_NUM]} 】的值必须大于 0"
+            )
+            return False
+
+        return True
+
+    def sanity_check(self, props: Dict[PropKeyEnum, Any]):
+        if not self.check_n_value(props):
+            return False
+
+        if not self.check_file_exist(props):
+            return False
+
+        return True
+
+    def echo(self):
+        QMessageBox.information(None, "成功", f"{self._ASSET_LIST}")
+
+    def export(self, props: Dict[PropKeyEnum, Any]):
+        if not self.sanity_check(props):
+            return
+        print("export data is OK")
+
+
 class WaterSortConfigWidget(QWidget):
     _layout: QVBoxLayout
     _props: Dict[PropKeyEnum, Any]
+    _collector: DataCollector
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._layout = QVBoxLayout(self)
         self._props = {}
+        self._collector = DataCollector()
         self.initUI()
 
     def initUI(self):
@@ -341,6 +412,7 @@ class WaterSortConfigWidget(QWidget):
         layout.addWidget(btn_debug_props)
 
         btn_export_data = QPushButton("导出", parent=self)
+        btn_export_data.clicked.connect(self._on_exp_btn_clicked)
         layout.addWidget(btn_export_data)
 
         return layout
@@ -349,8 +421,12 @@ class WaterSortConfigWidget(QWidget):
         self._props.update({key: value})
         print(f"Update Props: {key=}, {value=}")
 
+    def _on_exp_btn_clicked(self):
+        self._collector.export(self._props)
+
     def _on_dbg_btn_clicked(self):
         print(f"{self._props=}")
+        self._collector.echo()
 
 
 class WaterSortConfigApp(QApplication):
