@@ -7,6 +7,82 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+_LAST_OPEN_DIR = None
+
+_CONFIG_TEMPLATE = {
+    "LevelData": [
+        {"id": 1, "levle": "1-1", "titleImage": "TitleBg1"},
+        {"id": 2, "levle": "2-1", "titleImage": "TitleBg2"},
+        {"id": 3, "levle": "3-1", "titleImage": "TitleBg3"},
+    ],
+    "LevelLength": 3,
+    "ResultJumpType": "a",
+    "ResultJumpNumber": 2,
+    "ResultJumpImageURL": "WinBg",
+    "DownButtomInfo": {
+        "imageUrl": "DownButtomBg",
+        "scale": 1,
+        "aniTime": 1,
+        "delayTime": 1,
+        "aniScale": [1, 1.3],
+    },
+    "IsOpenTutorial": True,
+}
+
+
+class JxFileDialog(QFileDialog):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def _get_last_open_dir():
+        if _LAST_OPEN_DIR:
+            return _LAST_OPEN_DIR
+        return os.getcwd()
+
+    @staticmethod
+    def _set_last_open_dir(path):
+        _LAST_OPEN_DIR = path
+
+    @staticmethod
+    def open_single_file(caption=None, filter="All Files (*.*)"):
+        if caption is None:
+            caption = t(TextKey.DLOG_FILE_SINGLE_FILE)
+
+        directory = JxFileDialog._get_last_open_dir()
+        file_path, _ = JxFileDialog.getOpenFileName(None, caption, directory, filter)
+        if file_path is not None:
+            JxFileDialog._set_last_open_dir(os.path.dirname(file_path))
+
+        return file_path
+
+    @staticmethod
+    def open_single_dir(caption=None, init_dir=None):
+        if caption is None:
+            caption = t(TextKey.DLOG_FILE_SINGLE_DIR)
+
+        directory = init_dir or JxFileDialog._get_last_open_dir()
+        file_path = JxFileDialog.getExistingDirectory(None, caption, directory)
+        if file_path is not None:
+            JxFileDialog._set_last_open_dir(file_path)
+
+        return file_path
+
+    @staticmethod
+    def save_single_file(caption=None, filter="All Files (*.*)", default_filename=None):
+        if caption is None:
+            caption = t(TextKey.DLOG_FILE_SAVE_FILE)
+
+        directory = JxFileDialog._get_last_open_dir()
+        if default_filename is not None:
+            directory = os.path.join(directory, default_filename)
+
+        file_path, _ = JxFileDialog.getSaveFileName(None, caption, directory, filter)
+        if file_path is not None:
+            JxFileDialog._set_last_open_dir(os.path.dirname(file_path))
+
+        return file_path
+
 
 class WaterSortConfigWidget(QWidget):
     def __init__(self):
