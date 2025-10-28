@@ -2,28 +2,28 @@
 import copy
 import enum
 import json
+import os
 import shutil
 import sys
-import os
 from os import PathLike
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
+    QComboBox,
+    QFileDialog,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QMessageBox,
+    QPushButton,
+    QRadioButton,
+    QSpinBox,
     QVBoxLayout,
     QWidget,
-    QHBoxLayout,
-    QFileDialog,
-    QLabel,
-    QPushButton,
-    QLineEdit,
-    QGroupBox,
-    QComboBox,
-    QFormLayout,
-    QSpinBox,
-    QRadioButton,
 )
 
 
@@ -556,7 +556,6 @@ class WaterSortConfigWidget(QWidget):
 
 
 class WaterSortConfigApp(QApplication):
-
     def __init__(self):
         super().__init__(sys.argv)
         self.setStyle("Fusion")
