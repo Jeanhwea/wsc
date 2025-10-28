@@ -111,14 +111,25 @@ class FileLocationEdit(QWidget):
 class WaterSortConfigWidget(QWidget):
     _layout: QHBoxLayout
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._layout = QHBoxLayout(self)
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle("水排序工具")
         self.setGeometry(300, 300, 300, 100)
+
+        self.create_group_01()
+
+    def create_group_01(self):
+        group = QGroupBox("标题图片")
+        layout = QVBoxLayout(group)
+
+        edit01 = WaterSortConfigWidget(self)
+        layout.addWidget(edit01)
+
+        return group
 
 
 class WaterSortConfigApp(QApplication):
