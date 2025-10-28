@@ -1,6 +1,7 @@
 import sys
 import os
 from os import PathLike
+from typing import Dict, List, Any
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
@@ -14,6 +15,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLineEdit,
     QGroupBox,
+    QComboBox,
 )
 
 _LAST_OPEN_DIR = None
@@ -93,7 +95,7 @@ class JxFileDialog(QFileDialog):
         return file_path
 
 
-class FileLocationEdit(QWidget):
+class JxFileLocationEdit(QWidget):
     locationChanged = Signal(str)
 
     _layout: QHBoxLayout
@@ -136,12 +138,46 @@ class FileLocationEdit(QWidget):
         self.locationChanged.emit(path)
 
 
+class JxOptionSelector(QComboBox):
+    _options: List[Dict[str, Any]]
+
+    currentValueChanged = Signal(Any)
+
+    def __init__(self, options: List[Dict] = None, init_value=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._options = options or []
+        self._init_value = init_value
+        self._initUI()
+
+    def _initUI(self):
+        options = self._options
+        self.addOptions(options)
+
+        if self._init_value and options:
+            for i, item in enumerate(options):
+                if item.get("value") == self._init_value:
+                    self.setCurrentIndex(i)
+                    break
+
+        self.currentIndexChanged.connect(self._set_value)
+
+    def addOptions(self, options: List[Dict]):
+        for index, option in enumerate(options):
+            if "label" not in option:
+                raise Exception("JxOptionSelector miss label field.")
+            self.addItem(option["label"], index)
+
+    def _set_value(self, index):
+        value = self._options[index].get("value")
+        self.currentValueChanged.emit(value)
+
+
 class WaterSortConfigWidget(QWidget):
-    _layout: QHBoxLayout
+    _layout: QVBoxLayout
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._layout = QHBoxLayout(self)
+        self._layout = QVBoxLayout(self)
         self.initUI()
 
     def initUI(self):
@@ -150,14 +186,38 @@ class WaterSortConfigWidget(QWidget):
 
         layout = self._layout
 
-        layout.addWidget(self.create_group_01())
+        layout.addWidget(self._init_group_01())
+        layout.addWidget(self._init_group_02())
 
-    def create_group_01(self):
-        group = QGroupBox("标题图片")
+        layout.addStretch()
+
+    def _init_group_01(self):
+        group = QGroupBox("1.标题图片")
         layout = QVBoxLayout(group)
 
-        edit01 = FileLocationEdit(desc="关卡1", parent=self)
+        edit01 = JxFileLocationEdit(desc="关卡1：", parent=self)
         layout.addWidget(edit01)
+
+        edit02 = JxFileLocationEdit(desc="关卡2：", parent=self)
+        layout.addWidget(edit02)
+
+        edit03 = JxFileLocationEdit(desc="关卡3：", parent=self)
+        layout.addWidget(edit03)
+
+        return group
+
+    def _init_group_02(self):
+        group = QGroupBox("2.关卡文件")
+        layout = QVBoxLayout(group)
+
+        edit01 = JxFileLocationEdit(desc="关卡1：", parent=self)
+        layout.addWidget(edit01)
+
+        edit02 = JxFileLocationEdit(desc="关卡2：", parent=self)
+        layout.addWidget(edit02)
+
+        edit03 = JxFileLocationEdit(desc="关卡3：", parent=self)
+        layout.addWidget(edit03)
 
         return group
 
