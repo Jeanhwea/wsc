@@ -312,6 +312,28 @@ class DataCollector:
             return False
         return True
 
+    @staticmethod
+    def _is_valid_file(file_path: str):
+        if file_path is None or len(file_path) == 0:
+            return False
+        return True
+
+    def check_image_json_match(self, props: Dict[PropKeyEnum, Any]):
+        file_tuple_list = [
+            (PropKeyEnum.G1_FILE_01, PropKeyEnum.G2_FILE_01),
+            (PropKeyEnum.G1_FILE_02, PropKeyEnum.G2_FILE_02),
+            (PropKeyEnum.G1_FILE_03, PropKeyEnum.G2_FILE_03),
+        ]
+        for k1, k2 in file_tuple_list:
+            f1, f2 = props.get(k1), props.get(k2)
+            if self._is_valid_file(f1) and not self._is_valid_file(f2):
+                QMessageBox.warning(
+                    None, "错误", f"图片【{self._ERROR_MSG[k1]} 】的没有匹配的关卡【{self._ERROR_MSG[k2]}】"
+                )
+                return False
+
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
@@ -323,6 +345,9 @@ class DataCollector:
             return False
 
         if not self.check_level_count(props):
+            return False
+
+        if not self.check_image_json_match(props):
             return False
 
         return True
