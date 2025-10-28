@@ -2,6 +2,7 @@ import sys
 import os
 from os import PathLike
 
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
     QDoubleSpinBox,
@@ -93,6 +94,8 @@ class JxFileDialog(QFileDialog):
 
 
 class FileLocationEdit(QWidget):
+    locationChanged = Signal(str)
+
     _layout: QHBoxLayout
     _location: QLineEdit
 
@@ -102,7 +105,6 @@ class FileLocationEdit(QWidget):
         self._location = QLineEdit(self)
         self._layout = QHBoxLayout(self)
         self._initUI()
-
 
     def _initUI(self):
         # self.setFixedWidth(200)
@@ -115,9 +117,9 @@ class FileLocationEdit(QWidget):
 
         btn_open_cls = QPushButton("清空文件", parent=self)
         self._layout.addWidget(btn_open_cls, 1)
-        btn_open_cls.clicked.connect(self.on_btn_open_cls_clicked)  
+        btn_open_cls.clicked.connect(self.on_btn_open_cls_clicked)
 
-        edit_dir = self._location  
+        edit_dir = self._location
         edit_dir.setReadOnly(True)
         self._layout.addWidget(edit_dir, 8)
 
@@ -131,9 +133,7 @@ class FileLocationEdit(QWidget):
 
     def set_location(self, path):
         self._location.setText(path)
-
-    def get_location(self):
-        return self._location.text()
+        self.locationChanged.emit(path)
 
 
 class WaterSortConfigWidget(QWidget):
