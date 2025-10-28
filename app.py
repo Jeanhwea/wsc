@@ -161,9 +161,9 @@ class JxFileLocationEdit(QWidget):
         self._layout.addWidget(btn_open_dir, 1)
         btn_open_dir.clicked.connect(self.on_btn_open_dir_clicked)
 
-        btn_open_cls = QPushButton("清空", parent=self)
-        self._layout.addWidget(btn_open_cls, 1)
-        btn_open_cls.clicked.connect(self.on_btn_open_cls_clicked)
+        btn_text_cls = QPushButton("清空", parent=self)
+        self._layout.addWidget(btn_text_cls, 1)
+        btn_text_cls.clicked.connect(self.on_btn_text_cls_clicked)
 
         edit_dir = self._location
         edit_dir.setReadOnly(True)
@@ -174,7 +174,7 @@ class JxFileLocationEdit(QWidget):
         if path:
             self.set_location(path)
 
-    def on_btn_open_cls_clicked(self):
+    def on_btn_text_cls_clicked(self):
         self.set_location(None)
 
     def set_location(self, path):
@@ -231,9 +231,9 @@ class DataCollector:
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}",
         PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}",
         PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}",
-        PropKeyEnum.G2_FILE_01: "1-1",
-        PropKeyEnum.G2_FILE_02: "2-1",
-        PropKeyEnum.G2_FILE_03: "3-1",
+        PropKeyEnum.G2_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['levle']}",
+        PropKeyEnum.G2_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['levle']}",
+        PropKeyEnum.G2_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['levle']}",
         PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}",
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}",
     }
@@ -242,9 +242,9 @@ class DataCollector:
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
         PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
         PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}.png",
-        PropKeyEnum.G2_FILE_01: "lv1-1.json",
-        PropKeyEnum.G2_FILE_02: "lv2-1.json",
-        PropKeyEnum.G2_FILE_03: "lv3-1.json",
+        PropKeyEnum.G2_FILE_01: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
+        PropKeyEnum.G2_FILE_02: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
+        PropKeyEnum.G2_FILE_03: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
         PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}.png",
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
     }
