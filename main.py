@@ -1,5 +1,9 @@
+from app import WaterSortConfigApp
+
+
 def main():
-    print("Hello from wsc!")
+    app = WaterSortConfigApp()
+    app.exec()
 
 
 if __name__ == "__main__":
