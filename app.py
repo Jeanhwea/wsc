@@ -117,7 +117,7 @@ class JxFileLocationEdit(QWidget):
         self._layout.addWidget(btn_open_dir, 1)
         btn_open_dir.clicked.connect(self.on_btn_open_dir_clicked)
 
-        btn_open_cls = QPushButton("清空文件", parent=self)
+        btn_open_cls = QPushButton("清空", parent=self)
         self._layout.addWidget(btn_open_cls, 1)
         btn_open_cls.clicked.connect(self.on_btn_open_cls_clicked)
 
