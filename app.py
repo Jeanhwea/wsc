@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import enum
+import json
+import shutil
 import sys
 import os
+from os import PathLike
 from typing import Dict, List, Any
 
 from PySide6.QtCore import Signal
@@ -279,13 +282,51 @@ class DataCollector:
 
         return True
 
+    @staticmethod
+    def select_target_dir():
+        dir_path = JxFileDialog.open_single_dir("导出文件到文件夹")
+        if not dir_path:
+            QMessageBox.warning(None, "错误", f"未选择导出的文件夹")
+            return dir_path
+
+        return dir_path
+
+    def copy_file(self, src: PathLike, target_dir: PathLike, name: str):
+        if src is None or not os.path.exists(src):
+            return
+        dst = os.path.join(target_dir, f"{name}")
+        shutil.copyfile(src, dst)
+
+    @staticmethod
+    def store_config(target_dir: PathLike):
+        config_file = os.path.join(target_dir, "GameConfig.json")
+        with open(config_file, "w") as f:
+            json.dump(_CONFIG_TEMPLATE, f, indent=4, ensure_ascii=False)
+
+    def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+        for key, value in self._ASSET_LIST.items():
+            self.copy_file(
+                src=props.get(key),
+                target_dir=target_dir,
+                name=value,
+            )
+
+        self.store_config(target_dir)
+
     def echo(self):
         QMessageBox.information(None, "成功", f"{self._ASSET_LIST}")
 
     def export(self, props: Dict[PropKeyEnum, Any]):
         if not self.sanity_check(props):
             return
-        print("export data is OK")
+
+        target_dir = self.select_target_dir()
+        if target_dir is None or not os.path.exists(target_dir):
+            return
+
+        self.store_assets(props, target_dir)
+
+        QMessageBox.information(None, "成功", f"成功导出到：{target_dir}")
 
 
 class WaterSortConfigWidget(QWidget):
@@ -426,7 +467,6 @@ class WaterSortConfigWidget(QWidget):
 
     def _on_dbg_btn_clicked(self):
         print(f"{self._props=}")
-        self._collector.echo()
 
 
 class WaterSortConfigApp(QApplication):
