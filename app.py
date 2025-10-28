@@ -64,8 +64,8 @@ _CONFIG_TEMPLATE = {
         {"id": 3, "levle": "3-1", "titleImage": "TitleBg3"},
     ],
     "LevelLength": 3,
-    "ResultJumpType": "a",
-    "ResultJumpNumber": 2,
+    "ResultJumpType": "0",
+    "ResultJumpNumber": 0,
     "ResultJumpImageURL": "WinBg",
     "DownButtomInfo": {
         "imageUrl": "DownButtomBg",
