@@ -94,7 +94,7 @@ class JxFileDialog(QFileDialog):
 
 class FileLocationEdit(QWidget):
     _layout: QHBoxLayout
-    _location: PathLike
+    _location: QLineEdit
 
     def __init__(self, desc, *args, **kwargs):
         super().__init__(*args, **kwargs)
