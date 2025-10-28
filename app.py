@@ -276,11 +276,33 @@ class DataCollector:
 
         return True
 
+    @staticmethod
+    def check_level_file(props: Dict[PropKeyEnum, Any]):
+        data = [
+            props.get(PropKeyEnum.G2_FILE_01),
+            props.get(PropKeyEnum.G2_FILE_02),
+            props.get(PropKeyEnum.G2_FILE_03),
+        ]
+        print(data)
+
+        end = False
+        for i, path in enumerate(data):
+            if path is None or len(path) == 0:
+                end = True
+            if end and not (path is None or len(path) == 0):
+                QMessageBox.warning(None, "错误", f"必须配置连续的关卡，不可中断")
+                return False
+
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
 
         if not self.check_file_exist(props):
+            return False
+
+        if not self.check_level_file(props):
             return False
 
         return True
