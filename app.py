@@ -455,9 +455,9 @@ class WaterSortConfigWidget(QWidget):
         layout = QHBoxLayout()
         layout.addStretch()
 
-        btn_debug_props = QPushButton("調試", parent=self)
-        btn_debug_props.clicked.connect(self._on_dbg_btn_clicked)
-        layout.addWidget(btn_debug_props)
+        # btn_debug_props = QPushButton("調試", parent=self)
+        # btn_debug_props.clicked.connect(self._on_dbg_btn_clicked)
+        # layout.addWidget(btn_debug_props)
 
         btn_export_data = QPushButton("导出", parent=self)
         btn_export_data.clicked.connect(self._on_exp_btn_clicked)
