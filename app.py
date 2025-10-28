@@ -154,20 +154,20 @@ class JxFileLocationEdit(QWidget):
 
         if self._desc:
             label = QLabel(self._desc)
-            # label.setFixedWidth(40)
-            self._layout.addWidget(label, 1)
+            label.setFixedWidth(40)
+            layout.addWidget(label)
 
         btn_open_dir = QPushButton("选择文件", parent=self)
-        self._layout.addWidget(btn_open_dir, 1)
+        layout.addWidget(btn_open_dir, 1)
         btn_open_dir.clicked.connect(self.on_btn_open_dir_clicked)
 
         btn_text_cls = QPushButton("清空", parent=self)
-        self._layout.addWidget(btn_text_cls, 1)
+        layout.addWidget(btn_text_cls, 1)
         btn_text_cls.clicked.connect(self.on_btn_text_cls_clicked)
 
         edit_dir = self._location
         edit_dir.setReadOnly(True)
-        self._layout.addWidget(edit_dir, 8)
+        layout.addWidget(edit_dir, 8)
 
     def on_btn_open_dir_clicked(self):
         path = JxFileDialog.open_single_file(filter=f"File (*.{self._suffix})")
