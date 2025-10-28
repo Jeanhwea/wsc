@@ -1,5 +1,6 @@
 import sys
 import os
+from os import PathLike
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -93,12 +94,15 @@ class JxFileDialog(QFileDialog):
 
 class FileLocationEdit(QWidget):
     _layout: QHBoxLayout
+    _location: PathLike
 
     def __init__(self, desc, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desc = desc or "???"
+        self._location = QLineEdit(self)
         self._layout = QHBoxLayout(self)
         self._initUI()
+
 
     def _initUI(self):
         # self.setFixedWidth(200)
@@ -107,13 +111,29 @@ class FileLocationEdit(QWidget):
 
         btn_open_dir = QPushButton("选择文件", parent=self)
         self._layout.addWidget(btn_open_dir, 1)
+        btn_open_dir.clicked.connect(self.on_btn_open_dir_clicked)
 
         btn_open_cls = QPushButton("清空文件", parent=self)
         self._layout.addWidget(btn_open_cls, 1)
+        btn_open_cls.clicked.connect(self.on_btn_open_cls_clicked)  
 
-        edit_dir = QLineEdit(self)
+        edit_dir = self._location  
         edit_dir.setReadOnly(True)
         self._layout.addWidget(edit_dir, 8)
+
+    def on_btn_open_dir_clicked(self):
+        path = JxFileDialog.open_single_file()
+        if path:
+            self.set_location(path)
+
+    def on_btn_open_cls_clicked(self):
+        self.set_location("")
+
+    def set_location(self, path):
+        self._location.setText(path)
+
+    def get_location(self):
+        return self._location.text()
 
 
 class WaterSortConfigWidget(QWidget):
@@ -146,6 +166,7 @@ class WaterSortConfigApp(QApplication):
 
     def __init__(self):
         super().__init__(sys.argv)
+        self.setStyle("Fusion")
         self.wsc = WaterSortConfigWidget()
         self.wsc.show()
 
