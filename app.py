@@ -153,7 +153,9 @@ class JxFileLocationEdit(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
 
         if self._desc:
-            self._layout.addWidget(QLabel(self._desc))
+            label = QLabel(self._desc)
+            label.setFixedWidth(32)
+            self._layout.addWidget(label)
 
         btn_open_dir = QPushButton("选择文件", parent=self)
         self._layout.addWidget(btn_open_dir, 1)
@@ -292,18 +294,35 @@ class DataCollector:
 
         return dir_path
 
-    def copy_file(self, src: PathLike, target_dir: PathLike, name: str):
+    @staticmethod
+    def copy_file(src: PathLike, target_dir: PathLike, name: str):
         if src is None or not os.path.exists(src):
             return
         dst = os.path.join(target_dir, f"{name}")
         shutil.copyfile(src, dst)
 
-    @staticmethod
-    def store_config(props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+    def get_path_value(self, props: Dict[PropKeyEnum, Any], key: PropKeyEnum) -> str:
+        if props.get(key) is None or not os.path.exists(props.get(key)):
+            return ""
+        return self._ASSET_LIST[key]
+
+    def store_config(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         config_file = os.path.join(target_dir, "GameConfig.json")
         exp_config = copy.deepcopy(_CONFIG_TEMPLATE)
+
+        exp_config["LevelData"][0]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_01)
+        exp_config["LevelData"][1]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_02)
+        exp_config["LevelData"][2]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_03)
+
+        exp_config["LevelData"][0]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_01)
+        exp_config["LevelData"][1]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_02)
+        exp_config["LevelData"][2]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_03)
+
         exp_config["ResultJumpType"] = f"{props.get(PropKeyEnum.G3_OPT_TYP, LastLevelCondEnum.E00)}"
         exp_config["ResultJumpNumber"] = props.get(PropKeyEnum.G3_OPT_NUM, 0)
+        exp_config["ResultJumpImageURL"] = self.get_path_value(props, PropKeyEnum.G4_FILE_01)
+
+        exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_02)
         exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTOR, True)
 
         with open(config_file, "w") as f:
