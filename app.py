@@ -154,7 +154,7 @@ class JxFileLocationEdit(QWidget):
 
         if self._desc:
             label = QLabel(self._desc)
-            label.setFixedWidth(32)
+            label.setFixedWidth(40)
             self._layout.addWidget(label)
 
         btn_open_dir = QPushButton("选择文件", parent=self)
