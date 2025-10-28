@@ -1,0 +1,6 @@
+#+TITLE: 水排序工具需求文档
+#+AUTHOR: Jinghui Hu
+#+EMAIL: hujinghui@buaa.edu.cn
+#+DATE: <2025-10-28 Tue>
+#+STARTUP: overview num indent
+#+OPTIONS: ^:nil
