@@ -1,6 +1,6 @@
+import enum
 import sys
 import os
-from os import PathLike
 from typing import Dict, List, Any
 
 from PySide6.QtCore import Signal
@@ -16,7 +16,25 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QGroupBox,
     QComboBox,
+    QFormLayout,
+    QSpinBox,
+    QRadioButton,
 )
+
+
+class LastLevelCondEnum(enum.StrEnum):
+    E00 = "0"
+    E01 = "a"
+    E02 = "b"
+
+
+LastLevelCondEnumDict = {
+    LastLevelCondEnum.E00: "胜利/失败",
+    LastLevelCondEnum.E01: "胜利/失败/有效操作次数>n",
+    LastLevelCondEnum.E02: "胜利/失败/用户操作次数>n",
+}
+
+LastLevelCondOptionList = [{"label": f"{LastLevelCondEnumDict[e]}", "value": e} for e in LastLevelCondEnum]
 
 _LAST_OPEN_DIR = None
 
@@ -103,15 +121,18 @@ class JxFileLocationEdit(QWidget):
 
     def __init__(self, desc, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._desc = desc or "???"
+        self._desc = desc
         self._location = QLineEdit(self)
         self._layout = QHBoxLayout(self)
         self._initUI()
 
     def _initUI(self):
         # self.setFixedWidth(200)
+        layout = self._layout
+        layout.setContentsMargins(0, 0, 0, 0)
 
-        self._layout.addWidget(QLabel(self._desc))
+        if self._desc:
+            self._layout.addWidget(QLabel(self._desc))
 
         btn_open_dir = QPushButton("选择文件", parent=self)
         self._layout.addWidget(btn_open_dir, 1)
@@ -172,27 +193,42 @@ class JxOptionSelector(QComboBox):
         self.currentValueChanged.emit(value)
 
 
+class JxSpinBox(QSpinBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class JxRadioButton(QRadioButton):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class WaterSortConfigWidget(QWidget):
     _layout: QVBoxLayout
+    _props: Dict[str, Any]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._layout = QVBoxLayout(self)
+        self._props = {}
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle("水排序工具")
-        self.setGeometry(300, 300, 600, 300)
+        self.setWindowTitle("水排序配置制作工具")
+        self.setGeometry(100, 100, 600, 200)
 
         layout = self._layout
 
         layout.addWidget(self._init_group_01())
         layout.addWidget(self._init_group_02())
+        layout.addWidget(self._init_group_03())
+        layout.addWidget(self._init_group_04())
+        layout.addLayout(self._init_operation_area())
 
         layout.addStretch()
 
     def _init_group_01(self):
-        group = QGroupBox("1.标题图片")
+        group = QGroupBox("1. 标题图片")
         layout = QVBoxLayout(group)
 
         edit01 = JxFileLocationEdit(desc="关卡1：", parent=self)
@@ -207,7 +243,7 @@ class WaterSortConfigWidget(QWidget):
         return group
 
     def _init_group_02(self):
-        group = QGroupBox("2.关卡文件")
+        group = QGroupBox("2. 关卡文件")
         layout = QVBoxLayout(group)
 
         edit01 = JxFileLocationEdit(desc="关卡1：", parent=self)
@@ -220,6 +256,45 @@ class WaterSortConfigWidget(QWidget):
         layout.addWidget(edit03)
 
         return group
+
+    def _init_group_03(self):
+        group = QGroupBox("3. 最后一关的结束条件")
+        layout = QFormLayout(parent=group)
+
+        selector = JxOptionSelector(
+            options=LastLevelCondOptionList, init_value=LastLevelCondEnum.E00, parent=self
+        )
+        layout.addRow("结束条件类型", selector)
+
+        edit01 = JxSpinBox(self)
+        edit01.setRange(0, 99)
+        layout.addRow("n 值", edit01)
+
+        return group
+
+    def _init_group_04(self):
+        group = QGroupBox("4. 其他确认项")
+        layout = QFormLayout(parent=group)
+
+        edit01 = JxFileLocationEdit(desc=None, parent=self)
+        layout.addRow("结束页", edit01)
+
+        edit02 = JxFileLocationEdit(desc=None, parent=self)
+        layout.addRow("下载按钮图片", edit02)
+
+        check = JxRadioButton(parent=self)
+        layout.addRow("是否有新手", check)
+
+        return group
+
+    def _init_operation_area(self):
+        layout = QHBoxLayout()
+        layout.addStretch()
+
+        btn_export_data = QPushButton("导出", parent=self)
+        layout.addWidget(btn_export_data)
+
+        return layout
 
 
 class WaterSortConfigApp(QApplication):
