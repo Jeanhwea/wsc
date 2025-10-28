@@ -38,7 +38,7 @@ class PropKeyEnum(enum.StrEnum):
     G3_OPT_NUM = "G3_OPT_NUMBER"
     G4_FILE_01 = "G4_FILE_01"
     G4_FILE_02 = "G4_FILE_02"
-    G4_IS_TUTOR = "G4_IS_TUTOR"
+    G4_IS_TUTR = "G4_IS_TUTOR"
 
 
 class LastLevelCondEnum(enum.StrEnum):
@@ -260,7 +260,7 @@ class DataCollector:
         PropKeyEnum.G3_OPT_NUM: "3. 最后一关的结束条件/n 值",
         PropKeyEnum.G4_FILE_01: "4. 其他确认项/结束页",
         PropKeyEnum.G4_FILE_02: "4. 其他确认项/下载按钮图片",
-        PropKeyEnum.G4_IS_TUTOR: "4. 其他确认项/是否有新手",
+        PropKeyEnum.G4_IS_TUTR: "4. 其他确认项/是否有新手",
     }
 
     def __init__(self, *args, **kwargs):
@@ -408,7 +408,7 @@ class DataCollector:
         exp_config["ResultJumpImageURL"] = self.get_path_value(props, PropKeyEnum.G4_FILE_01)
 
         exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_02)
-        exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTOR, True)
+        exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTR, True)
 
         with open(config_file, "w") as f:
             json.dump(exp_config, f, indent=4, ensure_ascii=False)
@@ -549,7 +549,7 @@ class WaterSortConfigWidget(QWidget):
         layout.addRow("下载按钮图片", edit02)
 
         check = JxRadioButton(parent=self)
-        check.clicked.connect(lambda state, key=PropKeyEnum.G4_IS_TUTOR: self._set_props(key, value=state))
+        check.clicked.connect(lambda state, key=PropKeyEnum.G4_IS_TUTR: self._set_props(key, value=state))
         check.setChecked(True)
         layout.addRow("是否有新手", check)
 
