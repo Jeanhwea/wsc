@@ -328,7 +328,7 @@ class DataCollector:
             f1, f2 = props.get(k1), props.get(k2)
             if self._is_valid_file(f1) and not self._is_valid_file(f2):
                 QMessageBox.warning(
-                    None, "错误", f"图片【{self._ERROR_MSG[k1]} 】的没有匹配的关卡【{self._ERROR_MSG[k2]}】"
+                    None, "错误", f"图片【{self._ERROR_MSG[k1]} 】没有匹配的关卡【{self._ERROR_MSG[k2]}】"
                 )
                 return False
 
