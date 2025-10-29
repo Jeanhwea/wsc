@@ -499,7 +499,7 @@ class DataCollector:
 
         C = ""
         for i in range(0, n // 2):
-            C += f"{B[i : i + 2]}{random.choice(alphabeta)}"
+            C += f"{B[2 * i : 2 * i + 2]}{random.choice(alphabeta)}"
 
         return C
 
