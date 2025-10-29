@@ -62,7 +62,13 @@ LastLevelCondEnumDict = {
     LastLevelCondEnum.E02: "胜利/失败/用户操作次数>n",
 }
 
-LastLevelCondOptionList = [{"label": f"{LastLevelCondEnumDict[e]}", "value": e} for e in LastLevelCondEnum]
+LastLevelCondOptionList = [
+    {
+        "label": f"{LastLevelCondEnumDict[e]}",
+        "value": e,
+    }
+    for e in LastLevelCondEnum
+]
 
 _LAST_OPEN_DIR = None
 
@@ -426,7 +432,6 @@ class DataCollector:
 
         with open(dst, "w", encoding="utf-8") as f:
             f.write(text)
-
 
     @staticmethod
     def calc_file_md5_hash(target: PathLike):
