@@ -454,7 +454,7 @@ class DataCollector:
         return count
 
     @staticmethod
-    def update_atlas_png_file(src: PathLike, dst: PathLike, png_name: str):
+    def _replace_atlas_png_file(src: PathLike, dst: PathLike, png_name: str):
         if src is None or not os.path.exists(src):
             return ""
 
@@ -505,6 +505,7 @@ class DataCollector:
         src_dir = props.get(PropKeyEnum.G4_YXP_DIR, "")
         if not os.path.exists(src_dir):
             return
+
         for key, value in self._ASSET_YXP_FILES.items():
             files = self._list_glob_files(src_dir, key)
             self.copy_file(
@@ -512,6 +513,10 @@ class DataCollector:
                 target_dir=target_dir,
                 name=value,
             )
+
+        altla_file = os.path.join(target_dir, self._ASSET_YXP_FILES[YxpSuffixEnum.ATLAS])
+        png_name = self._ASSET_YXP_FILES[YxpSuffixEnum.PNG]
+        self._replace_atlas_png_file(altla_file, altla_file, png_name)
 
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         for key, value in self._ASSET_LIST.items():

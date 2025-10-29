@@ -16,7 +16,7 @@ class TestDartBalloonGame(TestCase):
         src = "./example/南瓜瓶/南瓜瓶子_接水.atlas"
         dst = "./temp/1.atlas"
         png_name = "心形瓶子_接水.png"
-        DataCollector.update_atlas_png_file(src, dst, png_name)
+        DataCollector._replace_atlas_png_file(src, dst, png_name)
 
     def test_list_atlas_files(self):
         src_dir = "./example/南瓜瓶"
