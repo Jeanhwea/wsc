@@ -238,6 +238,19 @@ class JxOptionSelector(QComboBox):
         self.currentValueChanged.emit(value)
 
 
+class JxMessageBox(QMessageBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def info(cls, text: str):
+        cls.information(None, "成功", text)
+
+    @classmethod
+    def warn(cls, text: str):
+        cls.warning(None, "错误", text)
+
+
 class JxSpinBox(QSpinBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -301,7 +314,7 @@ class DataCollector:
         for key in self._ASSET_LIST.keys():
             path = props.get(key)
             if path is not None and path != "" and not os.path.exists(path):
-                QMessageBox.warning(None, "错误", f"参数【{self._ERROR_MSG[key]} 】的文件已删除")
+                JxMessageBox.warn(f"参数【{self._ERROR_MSG[key]} 】的文件已删除")
                 return False
 
         return True
@@ -311,9 +324,7 @@ class DataCollector:
         opt_n_value = props.get(PropKeyEnum.G3_OPT_NUM, 0)
 
         if opt_type != LastLevelCondEnum.E00 and opt_n_value == 0:
-            QMessageBox.warning(
-                None, "错误", f"参数【{self._ERROR_MSG[PropKeyEnum.G3_OPT_NUM]} 】的值必须大于 0"
-            )
+            JxMessageBox.warn(f"参数【{self._ERROR_MSG[PropKeyEnum.G3_OPT_NUM]} 】的值必须大于 0")
             return False
 
         return True
@@ -331,7 +342,7 @@ class DataCollector:
             if path is None or len(path) == 0:
                 end = True
             if end and not (path is None or len(path) == 0):
-                QMessageBox.warning(None, "错误", f"必须配置连续的关卡，不可中断")
+                JxMessageBox.warn(f"必须配置连续的关卡，不可中断")
                 return False
 
         return True
@@ -339,7 +350,7 @@ class DataCollector:
     def check_level_count(self, props: Dict[PropKeyEnum, Any]):
         count_level = self.get_level_count(props)
         if count_level == 0:
-            QMessageBox.warning(None, "错误", f"必须配置至少 1 个关卡")
+            JxMessageBox.warn(f"必须配置至少 1 个关卡")
             return False
         return True
 
@@ -358,9 +369,7 @@ class DataCollector:
         for k1, k2 in file_tuple_list:
             f1, f2 = props.get(k1), props.get(k2)
             if self._is_valid_file(f1) and not self._is_valid_file(f2):
-                QMessageBox.warning(
-                    None, "错误", f"图片【{self._ERROR_MSG[k1]} 】没有匹配的关卡【{self._ERROR_MSG[k2]}】"
-                )
+                JxMessageBox.warn(f"图片【{self._ERROR_MSG[k1]} 】没有匹配的关卡【{self._ERROR_MSG[k2]}】")
                 return False
 
         return True
@@ -379,17 +388,13 @@ class DataCollector:
             return True
 
         if not os.path.exists(folder):
-            QMessageBox.warning(None, "错误", f"异形屏文件夹【{folder} 】已删除")
+            JxMessageBox.warn(f"异形屏文件夹【{folder} 】已删除")
             return False
 
         for suffix in self._ASSET_YXP_FILES.keys():
             files = self._list_glob_files(folder, suffix)
             if len(files) != 1:
-                QMessageBox.warning(
-                    None,
-                    "错误",
-                    f"异形屏文件夹数据错误：包含 {len(files)} 个 {suffix} 文件",
-                )
+                JxMessageBox.warn(f"异形屏文件夹数据错误：包含 {len(files)} 个 {suffix} 文件")
                 return False
 
         return True
@@ -419,7 +424,7 @@ class DataCollector:
     def select_target_dir():
         dir_path = JxFileDialog.open_single_dir("导出文件到文件夹")
         if not dir_path:
-            QMessageBox.warning(None, "错误", f"未选择导出的文件夹")
+            JxMessageBox.warn(f"未选择导出的文件夹")
             return dir_path
 
         return dir_path
@@ -561,7 +566,7 @@ class DataCollector:
 
         self.store_assets(props, target_dir)
 
-        QMessageBox.information(None, "成功", f"成功导出到：{target_dir}")
+        JxMessageBox.info(f"成功导出到：{target_dir}")
 
 
 class WaterSortConfigWidget(QWidget):
