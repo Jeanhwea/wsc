@@ -39,6 +39,7 @@ class PropKeyEnum(enum.StrEnum):
     G4_FILE_01 = "G4_FILE_01"
     G4_FILE_02 = "G4_FILE_02"
     G4_IS_TUTR = "G4_IS_TUTOR"
+    G4_YXP_DIR = "G4_YXP_DIR"
 
 
 class LastLevelCondEnum(enum.StrEnum):
@@ -139,10 +140,11 @@ class JxFileLocationEdit(QWidget):
     _layout: QHBoxLayout
     _location: QLineEdit
 
-    def __init__(self, desc=None, suffix=None, *args, **kwargs):
+    def __init__(self, desc=None, suffix=None, choose_dir=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desc = desc
         self._suffix = suffix
+        self._choose_dir = choose_dir
         self._location = QLineEdit(self)
         self._layout = QHBoxLayout(self)
         self._initUI()
@@ -156,7 +158,8 @@ class JxFileLocationEdit(QWidget):
             label.setFixedWidth(40)
             layout.addWidget(label)
 
-        btn_open_dir = QPushButton("选择文件", parent=self)
+        btn_text = "选择文件夹" if self._choose_dir else "选择文件"
+        btn_open_dir = QPushButton(btn_text, parent=self)
         layout.addWidget(btn_open_dir, 1)
         btn_open_dir.clicked.connect(self.on_btn_open_dir_clicked)
 
@@ -169,7 +172,11 @@ class JxFileLocationEdit(QWidget):
         layout.addWidget(edit_dir, 8)
 
     def on_btn_open_dir_clicked(self):
-        path = JxFileDialog.open_single_file(filter=f"File (*.{self._suffix})")
+        if self._choose_dir:
+            path = JxFileDialog.open_single_dir()
+        else:
+            path = JxFileDialog.open_single_file(filter=f"File (*.{self._suffix})")
+
         if path:
             self.set_location(path)
 
@@ -551,6 +558,12 @@ class WaterSortConfigWidget(QWidget):
         check.clicked.connect(lambda state, key=PropKeyEnum.G4_IS_TUTR: self._set_props(key, value=state))
         check.setChecked(True)
         layout.addRow("是否有新手", check)
+
+        edit03 = JxFileLocationEdit(choose_dir=True, parent=self)
+        edit03.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G4_YXP_DIR: self._set_props(key, value)
+        )
+        layout.addRow("异形瓶文件夹", edit03)
 
         return group
 
