@@ -428,7 +428,7 @@ class DataCollector:
     def copy_file(src: str, target_dir: str, name: str):
         if src is None or not os.path.exists(src):
             return
-        dst = os.path.join(target_dir, f"{name}")
+        dst = os.path.abspath(os.path.join(target_dir, f"{name}"))
 
         print(f"Copy file: {src} => {dst}")
         shutil.copyfile(src, dst)
