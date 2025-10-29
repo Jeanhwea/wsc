@@ -270,7 +270,7 @@ class DataCollector:
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
     }
 
-    _ASSET_YSP_DIR = {
+    _ASSET_YSP_FILES = {
         YspSuffixEnum.SKEL: f"心形瓶子_接水.{YspSuffixEnum.SKEL}",
         YspSuffixEnum.ATLAS: f"心形瓶子_接水.{YspSuffixEnum.ATLAS}",
         YspSuffixEnum.PNG: f"心形瓶子_接水.{YspSuffixEnum.PNG}",
@@ -473,6 +473,9 @@ class DataCollector:
                 target_dir=target_dir,
                 name=value,
             )
+
+        for key, value in self._ASSET_YSP_FILES.items():
+            pass
 
         self.store_config(props, target_dir)
 
