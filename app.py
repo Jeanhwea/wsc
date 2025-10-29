@@ -5,9 +5,9 @@ import glob
 import hashlib
 import json
 import os
+import random
 import shutil
 import sys
-from os import PathLike
 from typing import Any, Dict, List
 
 from PySide6.QtCore import Signal
@@ -292,6 +292,8 @@ class DataCollector:
         PropKeyEnum.G4_IS_TUTR: "4. 其他确认项/是否有新手",
     }
 
+    _CHAR_ALPHABETA = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -364,7 +366,7 @@ class DataCollector:
         return True
 
     @staticmethod
-    def _list_glob_files(folder: PathLike, suffix: str):
+    def _list_glob_files(folder: str, suffix: str):
         if folder is None or not os.path.exists(folder):
             return []
         glob_pattern = os.path.join(os.path.abspath(folder), f"*.{suffix}")
@@ -423,7 +425,7 @@ class DataCollector:
         return dir_path
 
     @staticmethod
-    def copy_file(src: PathLike, target_dir: PathLike, name: str):
+    def copy_file(src: str, target_dir: str, name: str):
         if src is None or not os.path.exists(src):
             return
         dst = os.path.join(target_dir, f"{name}")
@@ -454,7 +456,7 @@ class DataCollector:
         return count
 
     @staticmethod
-    def _replace_atlas_png_file(src: PathLike, dst: PathLike, png_name: str):
+    def _replace_atlas_png_file(src: str, dst: str, png_name: str):
         if src is None or not os.path.exists(src):
             return ""
 
@@ -469,16 +471,34 @@ class DataCollector:
             f.write(text)
 
     @staticmethod
-    def calc_file_md5_hash(target: PathLike):
-        if target is None or not os.path.exists(target):
-            return ""
+    def calc_file_md5_hash(target: str):
         with open(target, "rb") as f:
             md5_hash = hashlib.md5()
             while chunk := f.read(8192):
                 md5_hash.update(chunk)
         return md5_hash.hexdigest()
 
-    def store_config(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+    @classmethod
+    def calc_my_md5_checksum(cls, target: str):
+        if target is None or not os.path.exists(target):
+            return ""
+
+        A = cls.calc_file_md5_hash(target)
+        n = len(A)
+
+        B = ""
+        for i in range(0, n // 2):
+            B += f"{A[i + 1]}{A[i]}"
+
+        alphabeta = list(cls._CHAR_ALPHABETA)
+
+        C = ""
+        for i in range(0, n // 2):
+            C += f"{B[i : i + 2]}{random.choice(alphabeta)}"
+
+        return C
+
+    def store_config(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         config_file = os.path.join(target_dir, "GameConfig.json")
         exp_config = copy.deepcopy(_CONFIG_TEMPLATE)
 
@@ -498,10 +518,12 @@ class DataCollector:
         exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_02)
         exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTR, True)
 
+        exp_config["md5"] = self.calc_my_md5_checksum(props.get(PropKeyEnum.G4_FILE_02, ""))
+
         with open(config_file, "w") as f:
             json.dump(exp_config, f, indent=4, ensure_ascii=False)
 
-    def store_yxp_files(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+    def store_yxp_files(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         src_dir = props.get(PropKeyEnum.G4_YXP_DIR, "")
         if not os.path.exists(src_dir):
             return
@@ -518,7 +540,7 @@ class DataCollector:
         png_name = self._ASSET_YXP_FILES[YxpSuffixEnum.PNG]
         self._replace_atlas_png_file(altla_file, altla_file, png_name)
 
-    def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+    def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         for key, value in self._ASSET_LIST.items():
             self.copy_file(
                 src=props.get(key),
