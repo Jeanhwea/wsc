@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 import enum
+import glob
 import hashlib
 import json
 import os
@@ -43,7 +44,7 @@ class PropKeyEnum(enum.StrEnum):
     G4_YXP_DIR = "G4_YXP_DIR"
 
 
-class YspSuffixEnum(enum.StrEnum):
+class YxpSuffixEnum(enum.StrEnum):
     SKEL = "skel"
     ATLAS = "atlas"
     PNG = "png"
@@ -270,11 +271,11 @@ class DataCollector:
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
     }
 
-    _ASSET_YSP_FILES = {
-        YspSuffixEnum.SKEL: f"心形瓶子_接水.{YspSuffixEnum.SKEL}",
-        YspSuffixEnum.ATLAS: f"心形瓶子_接水.{YspSuffixEnum.ATLAS}",
-        YspSuffixEnum.PNG: f"心形瓶子_接水.{YspSuffixEnum.PNG}",
-        YspSuffixEnum.CSV: f"SpecialBottleConfig.{YspSuffixEnum.CSV}",
+    _ASSET_YXP_FILES = {
+        YxpSuffixEnum.SKEL: f"心形瓶子_接水.{YxpSuffixEnum.SKEL}",
+        YxpSuffixEnum.ATLAS: f"心形瓶子_接水.{YxpSuffixEnum.ATLAS}",
+        YxpSuffixEnum.PNG: f"心形瓶子_接水.{YxpSuffixEnum.PNG}",
+        YxpSuffixEnum.CSV: f"SpecialBottleConfig.{YxpSuffixEnum.CSV}",
     }
 
     _ERROR_MSG = {
@@ -362,6 +363,35 @@ class DataCollector:
 
         return True
 
+    @staticmethod
+    def _list_glob_files(folder: PathLike, suffix: str):
+        if folder is None or not os.path.exists(folder):
+            return []
+        glob_pattern = os.path.join(os.path.abspath(folder), f"*.{suffix}")
+        return glob.glob(glob_pattern)
+
+    def check_yxp_folder(self, props: Dict[PropKeyEnum, Any]):
+        folder = props.get(PropKeyEnum.G4_YXP_DIR, "")
+
+        if len(folder) == 0:
+            return True
+
+        if not os.path.exists(folder):
+            QMessageBox.warning(None, "错误", f"异形屏文件夹【{folder} 】已删除")
+            return False
+
+        for suffix in self._ASSET_YXP_FILES.keys():
+            files = self._list_glob_files(folder, suffix)
+            if len(files) != 1:
+                QMessageBox.warning(
+                    None,
+                    "错误",
+                    f"异形屏文件夹数据错误：包含 {len(files)} 个 {suffix} 文件",
+                )
+                return False
+
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
@@ -376,6 +406,9 @@ class DataCollector:
             return False
 
         if not self.check_image_json_match(props):
+            return False
+
+        if not self.check_yxp_folder(props):
             return False
 
         return True
@@ -394,6 +427,8 @@ class DataCollector:
         if src is None or not os.path.exists(src):
             return
         dst = os.path.join(target_dir, f"{name}")
+
+        print(f"Copy file: {src} => {dst}")
         shutil.copyfile(src, dst)
 
     def get_path_value(self, props: Dict[PropKeyEnum, Any], key: PropKeyEnum) -> str:
@@ -466,6 +501,18 @@ class DataCollector:
         with open(config_file, "w") as f:
             json.dump(exp_config, f, indent=4, ensure_ascii=False)
 
+    def store_yxp_files(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
+        src_dir = props.get(PropKeyEnum.G4_YXP_DIR, "")
+        if not os.path.exists(src_dir):
+            return
+        for key, value in self._ASSET_YXP_FILES.items():
+            files = self._list_glob_files(src_dir, key)
+            self.copy_file(
+                src=files[0],
+                target_dir=target_dir,
+                name=value,
+            )
+
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         for key, value in self._ASSET_LIST.items():
             self.copy_file(
@@ -474,9 +521,7 @@ class DataCollector:
                 name=value,
             )
 
-        for key, value in self._ASSET_YSP_FILES.items():
-            pass
-
+        self.store_yxp_files(props, target_dir)
         self.store_config(props, target_dir)
 
     def export(self, props: Dict[PropKeyEnum, Any]):

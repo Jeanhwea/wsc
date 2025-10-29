@@ -17,3 +17,9 @@ class TestDartBalloonGame(TestCase):
         dst = "./temp/1.atlas"
         png_name = "心形瓶子_接水.png"
         DataCollector.update_atlas_png_file(src, dst, png_name)
+
+    def test_list_atlas_files(self):
+        src_dir = "./example/南瓜瓶"
+        atlas_files = DataCollector._list_glob_files(src_dir, "atlas")
+        print(atlas_files)
+        self.assertEqual(1, len(atlas_files))
