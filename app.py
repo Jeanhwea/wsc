@@ -413,6 +413,20 @@ class DataCollector:
         return count
 
     @staticmethod
+    def update_atlas_png_file(target: PathLike, target_png_file: str):
+        if target is None or not os.path.exists(target):
+            return ""
+
+        with open(target, "r", encoding="utf-8") as f:
+            text = f.read().lstrip()
+
+        lines = text.splitlines()
+        lines[0] = target_png_file
+        text = "\n".join(lines)
+
+        return text
+
+    @staticmethod
     def calc_file_md5_hash(target: PathLike):
         if target is None or not os.path.exists(target):
             return ""
