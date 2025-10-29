@@ -2,28 +2,28 @@
 import copy
 import enum
 import json
+import os
 import shutil
 import sys
-import os
 from os import PathLike
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
+    QComboBox,
+    QFileDialog,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QMessageBox,
+    QPushButton,
+    QRadioButton,
+    QSpinBox,
     QVBoxLayout,
     QWidget,
-    QHBoxLayout,
-    QFileDialog,
-    QLabel,
-    QPushButton,
-    QLineEdit,
-    QGroupBox,
-    QComboBox,
-    QFormLayout,
-    QSpinBox,
-    QRadioButton,
 )
 
 
@@ -154,27 +154,27 @@ class JxFileLocationEdit(QWidget):
 
         if self._desc:
             label = QLabel(self._desc)
-            label.setFixedWidth(32)
-            self._layout.addWidget(label)
+            label.setFixedWidth(40)
+            layout.addWidget(label)
 
         btn_open_dir = QPushButton("选择文件", parent=self)
-        self._layout.addWidget(btn_open_dir, 1)
+        layout.addWidget(btn_open_dir, 1)
         btn_open_dir.clicked.connect(self.on_btn_open_dir_clicked)
 
-        btn_open_cls = QPushButton("清空", parent=self)
-        self._layout.addWidget(btn_open_cls, 1)
-        btn_open_cls.clicked.connect(self.on_btn_open_cls_clicked)
+        btn_text_cls = QPushButton("清空", parent=self)
+        layout.addWidget(btn_text_cls, 1)
+        btn_text_cls.clicked.connect(self.on_btn_text_cls_clicked)
 
         edit_dir = self._location
         edit_dir.setReadOnly(True)
-        self._layout.addWidget(edit_dir, 8)
+        layout.addWidget(edit_dir, 8)
 
     def on_btn_open_dir_clicked(self):
         path = JxFileDialog.open_single_file(filter=f"File (*.{self._suffix})")
         if path:
             self.set_location(path)
 
-    def on_btn_open_cls_clicked(self):
+    def on_btn_text_cls_clicked(self):
         self.set_location(None)
 
     def set_location(self, path):
@@ -231,9 +231,9 @@ class DataCollector:
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}",
         PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}",
         PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}",
-        PropKeyEnum.G2_FILE_01: "1-1",
-        PropKeyEnum.G2_FILE_02: "2-1",
-        PropKeyEnum.G2_FILE_03: "3-1",
+        PropKeyEnum.G2_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['levle']}",
+        PropKeyEnum.G2_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['levle']}",
+        PropKeyEnum.G2_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['levle']}",
         PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}",
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}",
     }
@@ -242,9 +242,9 @@ class DataCollector:
         PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
         PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
         PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}.png",
-        PropKeyEnum.G2_FILE_01: "lv1-1.json",
-        PropKeyEnum.G2_FILE_02: "lv2-1.json",
-        PropKeyEnum.G2_FILE_03: "lv3-1.json",
+        PropKeyEnum.G2_FILE_01: f"lv{_CONFIG_TEMPLATE['LevelData'][0]['levle']}.json",
+        PropKeyEnum.G2_FILE_02: f"lv{_CONFIG_TEMPLATE['LevelData'][1]['levle']}.json",
+        PropKeyEnum.G2_FILE_03: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
         PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}.png",
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
     }
@@ -312,6 +312,28 @@ class DataCollector:
             return False
         return True
 
+    @staticmethod
+    def _is_valid_file(file_path: str):
+        if file_path is None or len(file_path) == 0:
+            return False
+        return True
+
+    def check_image_json_match(self, props: Dict[PropKeyEnum, Any]):
+        file_tuple_list = [
+            (PropKeyEnum.G1_FILE_01, PropKeyEnum.G2_FILE_01),
+            (PropKeyEnum.G1_FILE_02, PropKeyEnum.G2_FILE_02),
+            (PropKeyEnum.G1_FILE_03, PropKeyEnum.G2_FILE_03),
+        ]
+        for k1, k2 in file_tuple_list:
+            f1, f2 = props.get(k1), props.get(k2)
+            if self._is_valid_file(f1) and not self._is_valid_file(f2):
+                QMessageBox.warning(
+                    None, "错误", f"图片【{self._ERROR_MSG[k1]} 】的没有匹配的关卡【{self._ERROR_MSG[k2]}】"
+                )
+                return False
+
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
@@ -323,6 +345,9 @@ class DataCollector:
             return False
 
         if not self.check_level_count(props):
+            return False
+
+        if not self.check_image_json_match(props):
             return False
 
         return True
@@ -556,7 +581,6 @@ class WaterSortConfigWidget(QWidget):
 
 
 class WaterSortConfigApp(QApplication):
-
     def __init__(self):
         super().__init__(sys.argv)
         self.setStyle("Fusion")
