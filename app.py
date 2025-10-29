@@ -42,6 +42,13 @@ class PropKeyEnum(enum.StrEnum):
     G4_YXP_DIR = "G4_YXP_DIR"
 
 
+class YspSuffixEnum(enum.StrEnum):
+    SKEL = "skel"
+    ATLAS = "atlas"
+    PNG = "png"
+    CSV = "csv"
+
+
 class LastLevelCondEnum(enum.StrEnum):
     E00 = "0"
     E01 = "a"
@@ -76,6 +83,7 @@ _CONFIG_TEMPLATE = {
         "aniScale": [1, 1.3],
     },
     "IsOpenTutorial": True,
+    "md5": "",
 }
 
 
@@ -255,6 +263,13 @@ class DataCollector:
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
     }
 
+    _ASSET_YSP_DIR = {
+        YspSuffixEnum.SKEL: f"心形瓶子_接水.{YspSuffixEnum.SKEL}",
+        YspSuffixEnum.ATLAS: f"心形瓶子_接水.{YspSuffixEnum.ATLAS}",
+        YspSuffixEnum.PNG: f"心形瓶子_接水.{YspSuffixEnum.PNG}",
+        YspSuffixEnum.CSV: f"SpecialBottleConfig.{YspSuffixEnum.CSV}",
+    }
+
     _ERROR_MSG = {
         PropKeyEnum.G1_FILE_01: "1. 标题图片/关卡1",
         PropKeyEnum.G1_FILE_02: "1. 标题图片/关卡2",
@@ -429,9 +444,6 @@ class DataCollector:
 
         self.store_config(props, target_dir)
 
-    def echo(self):
-        QMessageBox.information(None, "成功", f"{self._ASSET_LIST}")
-
     def export(self, props: Dict[PropKeyEnum, Any]):
         if not self.sanity_check(props):
             return
@@ -468,6 +480,7 @@ class WaterSortConfigWidget(QWidget):
         layout.addWidget(self._init_group_02())
         layout.addWidget(self._init_group_03())
         layout.addWidget(self._init_group_04())
+
         layout.addStretch()
         layout.addLayout(self._init_operation_area())
 
