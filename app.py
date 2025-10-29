@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 import enum
+import hashlib
 import json
 import os
 import shutil
@@ -410,6 +411,16 @@ class DataCollector:
             count += 1
 
         return count
+
+    @staticmethod
+    def calc_file_md5_hash(target: PathLike):
+        if target is None or not os.path.exists(target):
+            return ""
+        with open(target, "rb") as f:
+            md5_hash = hashlib.md5()
+            while chunk := f.read(8192):
+                md5_hash.update(chunk)
+        return md5_hash.hexdigest()
 
     def store_config(self, props: Dict[PropKeyEnum, Any], target_dir: PathLike):
         config_file = os.path.join(target_dir, "GameConfig.json")
