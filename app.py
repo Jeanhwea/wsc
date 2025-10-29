@@ -95,9 +95,9 @@ class JxFileDialog(QFileDialog):
         _LAST_OPEN_DIR = path
 
     @staticmethod
-    def open_single_file(caption=None, filter="All Files (*.*)"):
-        if caption is None:
-            caption = "打开文件"
+    def open_single_file(caption=None, filter=None):
+        caption = caption or "打开文件"
+        filter = filter or "All Files (*.*)"
 
         directory = JxFileDialog._get_last_open_dir()
         file_path, _ = JxFileDialog.getOpenFileName(None, caption, directory, filter)
@@ -108,8 +108,7 @@ class JxFileDialog(QFileDialog):
 
     @staticmethod
     def open_single_dir(caption=None, init_dir=None):
-        if caption is None:
-            caption = "打开文件夹"
+        caption = caption or "打开文件夹"
 
         directory = init_dir or JxFileDialog._get_last_open_dir()
         file_path = JxFileDialog.getExistingDirectory(None, caption, directory)
@@ -119,9 +118,9 @@ class JxFileDialog(QFileDialog):
         return file_path
 
     @staticmethod
-    def save_single_file(caption=None, filter="All Files (*.*)", default_filename=None):
-        if caption is None:
-            caption = "保存文件"
+    def save_single_file(caption=None, filter=None, default_filename=None):
+        caption = caption or "保存文件"
+        filter = filter or "All Files (*.*)"
 
         directory = JxFileDialog._get_last_open_dir()
         if default_filename is not None:
