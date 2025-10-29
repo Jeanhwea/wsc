@@ -722,9 +722,9 @@ class WaterSortConfigApp(QApplication):
         super().__init__(sys.argv)
         self.setStyle("Fusion")
         self.wsc = WaterSortConfigWidget()
-        self.wsc.show()
 
     def run(self):
+        self.wsc.show()
         sys.exit(self.exec())
 
 
