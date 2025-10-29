@@ -140,7 +140,7 @@ class JxFileLocationEdit(QWidget):
     _layout: QHBoxLayout
     _location: QLineEdit
 
-    def __init__(self, desc, suffix=None, *args, **kwargs):
+    def __init__(self, desc=None, suffix=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desc = desc
         self._suffix = suffix
@@ -195,7 +195,7 @@ class JxOptionSelector(QComboBox):
 
     def _initUI(self):
         options = self._options
-        self.addOptions(options)
+        self.add_options(options)
 
         if self._init_value and options:
             for i, item in enumerate(options):
@@ -205,7 +205,7 @@ class JxOptionSelector(QComboBox):
 
         self.currentIndexChanged.connect(self._set_value)
 
-    def addOptions(self, options: List[Dict]):
+    def add_options(self, options: List[Dict]):
         for index, option in enumerate(options):
             if "label" not in option:
                 raise Exception("JxOptionSelector miss label field.")
@@ -467,49 +467,49 @@ class WaterSortConfigWidget(QWidget):
 
     def _init_group_01(self):
         group = QGroupBox("1. 标题图片")
-        layout = QVBoxLayout(group)
+        layout = QFormLayout(parent=group)
 
-        edit01 = JxFileLocationEdit(desc="关卡1：", suffix="png", parent=self)
+        edit01 = JxFileLocationEdit(suffix="png", parent=self)
         edit01.locationChanged.connect(
             lambda value, key=PropKeyEnum.G1_FILE_01: self._set_props(key, value)
         )
-        layout.addWidget(edit01)
+        layout.addRow("关卡1", edit01)
 
-        edit02 = JxFileLocationEdit(desc="关卡2：", suffix="png", parent=self)
+        edit02 = JxFileLocationEdit(suffix="png", parent=self)
         edit02.locationChanged.connect(
             lambda value, key=PropKeyEnum.G1_FILE_02: self._set_props(key, value)
         )
-        layout.addWidget(edit02)
+        layout.addRow("关卡2", edit02)
 
-        edit03 = JxFileLocationEdit(desc="关卡3：", suffix="png", parent=self)
+        edit03 = JxFileLocationEdit(suffix="png", parent=self)
         edit03.locationChanged.connect(
             lambda value, key=PropKeyEnum.G1_FILE_03: self._set_props(key, value)
         )
-        layout.addWidget(edit03)
+        layout.addRow("关卡3", edit03)
 
         return group
 
     def _init_group_02(self):
         group = QGroupBox("2. 关卡文件")
-        layout = QVBoxLayout(group)
+        layout = QFormLayout(parent=group)
 
-        edit01 = JxFileLocationEdit(desc="关卡1：", suffix="json", parent=self)
+        edit01 = JxFileLocationEdit(suffix="json", parent=self)
         edit01.locationChanged.connect(
             lambda value, key=PropKeyEnum.G2_FILE_01: self._set_props(key, value)
         )
-        layout.addWidget(edit01)
+        layout.addRow("关卡1", edit01)
 
-        edit02 = JxFileLocationEdit(desc="关卡2：", suffix="json", parent=self)
+        edit02 = JxFileLocationEdit(suffix="json", parent=self)
         edit02.locationChanged.connect(
             lambda value, key=PropKeyEnum.G2_FILE_02: self._set_props(key, value)
         )
-        layout.addWidget(edit02)
+        layout.addRow("关卡2", edit02)
 
-        edit03 = JxFileLocationEdit(desc="关卡3：", suffix="json", parent=self)
+        edit03 = JxFileLocationEdit(suffix="json", parent=self)
         edit03.locationChanged.connect(
             lambda value, key=PropKeyEnum.G2_FILE_03: self._set_props(key, value)
         )
-        layout.addWidget(edit03)
+        layout.addRow("关卡3", edit03)
 
         return group
 
@@ -536,13 +536,13 @@ class WaterSortConfigWidget(QWidget):
         group = QGroupBox("4. 其他确认项")
         layout = QFormLayout(parent=group)
 
-        edit01 = JxFileLocationEdit(desc=None, suffix="png", parent=self)
+        edit01 = JxFileLocationEdit(suffix="png", parent=self)
         edit01.locationChanged.connect(
             lambda value, key=PropKeyEnum.G4_FILE_01: self._set_props(key, value)
         )
         layout.addRow("结束页", edit01)
 
-        edit02 = JxFileLocationEdit(desc=None, suffix="png", parent=self)
+        edit02 = JxFileLocationEdit(suffix="png", parent=self)
         edit02.locationChanged.connect(
             lambda value, key=PropKeyEnum.G4_FILE_02: self._set_props(key, value)
         )
