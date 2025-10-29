@@ -7,6 +7,12 @@ class TestDartBalloonGame(TestCase):
 
     def test_calc_md5(self):
         target = "./example/南瓜瓶/南瓜瓶子_接水.png"
+        hash_md5 = DataCollector.calc_file_md5_hash(target)
+        print(hash_md5)
+        self.assertEqual(32, len(hash_md5))
+
+    def test_calc_my_md5(self):
+        target = "./example/南瓜瓶/南瓜瓶子_接水.png"
         hash_md5 = DataCollector.calc_my_md5_checksum(target)
         print(hash_md5)
         self.assertEqual(48, len(hash_md5))
