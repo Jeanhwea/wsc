@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ========== 基本信息 ==========
 APP_NAME="WaterSortTool"
-VERSION="1.0.1"
+VERSION="1.1.0"
 ENTRY="app.py"
 
 # 输出目录
@@ -11,10 +11,9 @@ OUTPUT_DIR="output"
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
-# ====== 按你的实际路径填写（已给出示例）======
-# ARM64 Conda 解释器（你的 diff 环境）
+# ARM64 Conda 解释器
 PY_ARM="/Users/a/miniconda3/envs/diff/bin/python"
-# X86_64 Conda 解释器（你刚确认的 py311_x86）
+# X86_64 Conda 解释器
 PY_X86="/Users/a/miniforge3/envs/py311_x86/bin/python"
 # 如需强制经 Rosetta 启动，也可写成：
 # PY_X86="arch -x86_64 /Users/a/miniforge3/envs/py311_x86/bin/python"
@@ -41,7 +40,7 @@ build_one() {
   # 安装（各自环境独立）
   eval "$PY -m pip install -U pip pyinstaller"
 
-  # 你的原始 PyInstaller 参数
+  # 原始 PyInstaller 参数
   eval "$PY -m PyInstaller \
     --name=\"$APP_NAME\" \
     --windowed \
@@ -62,7 +61,6 @@ build_one() {
   echo "打包完成，dist 内容："
   ls -lah "$DIST_DIR" || true
 
-  # ✅ 正确的写法：不要把引号塞进变量值里
   local APP_BUNDLE="$DIST_DIR/${APP_NAME}.app"
 
   # 如果默认名没找到，兜底：在 dist 里找任何 .app
