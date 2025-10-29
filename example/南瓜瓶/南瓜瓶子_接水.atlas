@@ -1,0 +1,139 @@
+
+南瓜瓶子_接水.png
+size: 1784,1921
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+倒出_调色
+  rotate: false
+  xy: 645, 167
+  size: 17, 62
+  orig: 17, 62
+  offset: 0, 0
+  index: -1
+倒出_高光
+  rotate: false
+  xy: 121, 83
+  size: 17, 62
+  orig: 17, 62
+  offset: 0, 0
+  index: -1
+南瓜瓶_外发光
+  rotate: false
+  xy: 2, 963
+  size: 1000, 956
+  orig: 1028, 984
+  offset: 14, 14
+  index: -1
+南瓜瓶_瓶口
+  rotate: false
+  xy: 2, 231
+  size: 778, 730
+  orig: 778, 730
+  offset: 0, 0
+  index: -1
+南瓜瓶_瓶底
+  rotate: false
+  xy: 1004, 1189
+  size: 778, 730
+  orig: 778, 730
+  offset: 0, 0
+  index: -1
+南瓜瓶_瓶身
+  rotate: false
+  xy: 1004, 457
+  size: 778, 730
+  orig: 778, 730
+  offset: 0, 0
+  index: -1
+大塞子上
+  rotate: false
+  xy: 1406, 335
+  size: 178, 120
+  orig: 178, 174
+  offset: 0, 54
+  index: -1
+大塞子下
+  rotate: false
+  xy: 1406, 243
+  size: 84, 90
+  orig: 178, 174
+  offset: 47, 1
+  index: -1
+心形瓶子_分层水_1
+  rotate: false
+  xy: 782, 2
+  size: 622, 453
+  orig: 622, 453
+  offset: 0, 0
+  index: -1
+心形瓶子_水面
+  rotate: false
+  xy: 2, 189
+  size: 506, 40
+  orig: 506, 40
+  offset: 0, 0
+  index: -1
+心形瓶子_水面渐变
+  rotate: false
+  xy: 2, 147
+  size: 506, 40
+  orig: 506, 40
+  offset: 0, 0
+  index: -1
+水_序列_0
+  rotate: false
+  xy: 1406, 221
+  size: 30, 20
+  orig: 160, 80
+  offset: 76, 2
+  index: -1
+水_序列_1
+  rotate: false
+  xy: 923, 908
+  size: 61, 53
+  orig: 160, 80
+  offset: 57, 2
+  index: -1
+水_序列_2
+  rotate: false
+  xy: 2, 4
+  size: 84, 67
+  orig: 160, 80
+  offset: 43, 2
+  index: -1
+水_序列_3
+  rotate: false
+  xy: 1586, 383
+  size: 102, 72
+  orig: 160, 80
+  offset: 30, 2
+  index: -1
+水_序列_4
+  rotate: false
+  xy: 2, 73
+  size: 117, 72
+  orig: 160, 80
+  offset: 18, 2
+  index: -1
+水_序列_5
+  rotate: false
+  xy: 510, 164
+  size: 133, 65
+  orig: 160, 80
+  offset: 6, 2
+  index: -1
+水_序列_6
+  rotate: false
+  xy: 782, 900
+  size: 139, 61
+  orig: 160, 80
+  offset: 1, 2
+  index: -1
+水波
+  rotate: false
+  xy: 782, 870
+  size: 130, 28
+  orig: 130, 28
+  offset: 0, 0
+  index: -1
