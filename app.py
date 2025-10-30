@@ -430,10 +430,15 @@ class DataCollector:
         return dir_path
 
     @staticmethod
-    def copy_file(src: str, target_dir: str, name: str):
-        if src is None or not os.path.exists(src):
+    def copy_file(source: str, target_dir: str, name: str):
+        if source is None or not os.path.exists(source):
             return
+        src = os.path.abspath(source)
         dst = os.path.abspath(os.path.join(target_dir, f"{name}"))
+
+        if src == dst:
+            print(f"Skip copy same file: {src=}, {dst=}")
+            return
 
         print(f"Copy file: {src} => {dst}")
         shutil.copyfile(src, dst)
@@ -536,7 +541,7 @@ class DataCollector:
         for key, value in self._ASSET_YXP_FILES.items():
             files = self._list_glob_files(src_dir, key)
             self.copy_file(
-                src=files[0],
+                source=files[0],
                 target_dir=target_dir,
                 name=value,
             )
@@ -548,7 +553,7 @@ class DataCollector:
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         for key, value in self._ASSET_LIST.items():
             self.copy_file(
-                src=props.get(key),
+                source=props.get(key),
                 target_dir=target_dir,
                 name=value,
             )
