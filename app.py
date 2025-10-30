@@ -493,13 +493,13 @@ class DataCollector:
 
         B = ""
         for i in range(0, n // 2):
-            B += f"{A[i + 1]}{A[i]}"
+            B += f"{A[2 * i + 1]}{A[2 * i]}"
 
         alphabeta = list(cls._CHAR_ALPHABETA)
 
         C = ""
         for i in range(0, n // 2):
-            C += f"{B[i : i + 2]}{random.choice(alphabeta)}"
+            C += f"{B[2 * i : 2 * i + 2]}{random.choice(alphabeta)}"
 
         return C
 
