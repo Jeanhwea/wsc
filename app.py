@@ -42,6 +42,7 @@ class PropKeyEnum(enum.StrEnum):
     G4_FILE_02 = "G4_FILE_02"
     G4_IS_TUTR = "G4_IS_TUTOR"
     G4_YXP_DIR = "G4_YXP_DIR"
+    G4_FILE_04 = "G4_FILE_04"
 
 
 class YxpSuffixEnum(enum.StrEnum):
@@ -282,6 +283,7 @@ class DataCollector:
         PropKeyEnum.G2_FILE_03: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
         PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}.png",
         PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
+        PropKeyEnum.G4_FILE_04: f"SodaSorting_pic_bg_1.jpg",
     }
 
     _ASSET_YXP_FILES = {
@@ -694,6 +696,12 @@ class WaterSortConfigWidget(QWidget):
             lambda value, key=PropKeyEnum.G4_YXP_DIR: self._set_props(key, value)
         )
         layout.addRow("异形瓶文件夹", edit03)
+
+        edit04 = JxFileLocationEdit(suffix="jpg", parent=self)
+        edit04.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G4_FILE_04: self._set_props(key, value)
+        )
+        layout.addRow("背景图", edit04)
 
         return group
 
