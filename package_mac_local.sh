@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ========== 基本信息 ==========
 APP_NAME="WaterSortTool"
-VERSION="1.1.0"
+VERSION="1.1.5"
 ENTRY="app.py"
 
 # 输出目录
