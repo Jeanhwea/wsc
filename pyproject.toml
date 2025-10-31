@@ -1,6 +1,6 @@
 [project]
 name = "wsc"
-version = "1.1.4"
+version = "1.1.5"
 description = "Water Sorter Configur"
 readme = "readme.org"
 requires-python = ">=3.12"
