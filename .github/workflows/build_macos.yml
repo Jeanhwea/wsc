@@ -60,7 +60,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WaterSortTool-${{ matrix.arch }}-"${{ github.ref_name }}"
+          name: WaterSortTool-${{ matrix.arch }}-${{ github.ref_name }}
           path: dist_${{ matrix.arch }}/*.dmg
 
   release:
