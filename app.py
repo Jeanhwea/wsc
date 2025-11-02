@@ -498,15 +498,11 @@ class DataCollector:
         A = cls.calc_file_md5_hash(target)
         n = len(A)
 
-        B = ""
-        for i in range(0, n // 2):
-            B += f"{A[2 * i + 1]}{A[2 * i]}"
+        B = "".join([f"{A[2 * i + 1]}{A[2 * i]}" for i in range(0, n // 2)])
 
-        alphabeta = list(cls._CHAR_ALPHABETA)
-
-        C = ""
-        for i in range(0, n // 2):
-            C += f"{B[2 * i : 2 * i + 2]}{random.choice(alphabeta)}"
+        C = "".join(
+            [f"{B[2 * i : 2 * i + 2]}{random.choice(cls._CHAR_ALPHABETA)}" for i in range(0, n // 2)]
+        )
 
         return C
 
