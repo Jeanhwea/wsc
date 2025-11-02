@@ -46,25 +46,25 @@ jobs:
             --enable-plugin=pyside6 \
             app.py
 
-      - name: Create DMG
-        env:
-          APP_NAME: "WaterSortTool"
-          ARCH: "${{ matrix.arch }}"
-          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
-        run: |
-          ls -alh dist_${ARCH}
-          mkdir -p dist_${ARCH}/dmg
-          cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
-          hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
+      # - name: Create DMG
+      #   env:
+      #     APP_NAME: "WaterSortTool"
+      #     ARCH: "${{ matrix.arch }}"
+      #     DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
+      #   run: |
+      #     ls -alh dist_${ARCH}
+      #     mkdir -p dist_${ARCH}/dmg
+      #     cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
+      #     hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
 
       - name: Upload artifact
         env:
-          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}.dmg"
+          APP_NAME: "WaterSortTool"
+          ARCH: "${{ matrix.arch }}"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.DMG_NAME }}
-          path: dist_${{ matrix.arch }}/${{ env.DMG_NAME }}
-          compress: false
+          name: ${{ env.APP_NAME }}.app
+          path: dist_${{ env.ARCH} }/${{ env.APP_NAME }}.app
 
   release:
     needs: build
@@ -81,7 +81,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.dmg
+          files: artifacts/*.zip
           draft: false
           prerelease: false
         env:
