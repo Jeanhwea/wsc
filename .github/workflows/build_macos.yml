@@ -39,7 +39,6 @@ jobs:
             --standalone \
             --macos-create-app-bundle \
             --macos-app-name="WaterSortTool" \
-            --macos-app-bundle-identifier="io.jeanhwea.github.redinf.wsc" \
             --enable-plugin=pyside6 \
             --output-dir=dist_${{ matrix.arch }} \
             app.py
