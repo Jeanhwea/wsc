@@ -35,7 +35,7 @@ jobs:
       - name: Build with Nuitka
         run: |
           source .venv/bin/activate
-          uv run python -m nuitka \
+          python -m nuitka \
             --standalone \
             --macos-create-app-bundle \
             --macos-app-name="WaterSortTool" \
