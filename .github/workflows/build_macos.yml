@@ -49,6 +49,7 @@ jobs:
           ARCH="${{ matrix.arch }}"
           GIT_TAG="${{ github.ref_name }}"
           DMG_NAME="${APP_NAME}_${ARCH}_${GIT_TAG}.dmg"
+          ls -alh dist_${ARCH}
           mkdir -p dist_${ARCH}/dmg
           cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
           hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
