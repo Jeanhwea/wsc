@@ -60,10 +60,8 @@ jobs:
 
       - name: Upload artifact
         env:
-          APP_NAME: "WaterSortTool"
-          ARCH: "${{ matrix.arch }}"
-          APP_DIST: "${{ format('dist_{0}/{1}.app', env.ARCH, env.APP_NAME) }}"
-          ZIP_NAME: "${{ format('{0}-{1}-{2}.zip', env.APP_NAME, env.ARCH, github.ref_name) }}"
+          APP_DIST: "${{ format('dist_{0}/{1}.app', matrix.arch, 'WaterSortTool') }}"
+          ZIP_NAME: "${{ format('{0}-{1}-{2}.zip', 'WaterSortTool', matrix.arch, github.ref_name) }}"
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
