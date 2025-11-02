@@ -46,16 +46,17 @@ jobs:
             --enable-plugin=pyside6 \
             app.py
 
-      # - name: Create DMG
-      #   env:
-      #     APP_NAME: "WaterSortTool"
-      #     ARCH: "${{ matrix.arch }}"
-      #     DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
-      #   run: |
-      #     ls -alh dist_${ARCH}
-      #     mkdir -p dist_${ARCH}/dmg
-      #     cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
-      #     hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
+      - name: Create DMG
+        skip: true
+        env:
+          APP_NAME: "WaterSortTool"
+          ARCH: "${{ matrix.arch }}"
+          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
+        run: |
+          ls -alh dist_${ARCH}
+          mkdir -p dist_${ARCH}/dmg
+          cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
+          hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
 
       - name: Upload artifact
         env:
