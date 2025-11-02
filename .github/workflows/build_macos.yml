@@ -1,0 +1,84 @@
+name: Build macOS Application
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: macos-latest
+        arch: [ x64, arm64 ]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: ${{ matrix.arch }}
+      
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync
+      
+      - name: Build with Nuitka
+        run: |
+          source .venv/bin/activate
+          uv sync
+          python -m nuitka \
+            --standalone \
+            --macos-create-app-bundle \
+            --macos-app-name="WaterSortConfig" \
+            --macos-app-bundle-identifier="com.redinf.watersortconfig" \
+            --enable-plugin=pyside6 \
+            --include-data-dir=example=example \
+            --output-dir=dist_${{ matrix.arch }} \
+            app.py
+      
+      - name: Create DMG
+        run: |
+          APP_NAME="WaterSortConfig"
+          ARCH="${{ matrix.arch }}"
+          DMG_NAME="${APP_NAME}_${ARCH}.dmg"
+          
+          mkdir -p dist_${ARCH}/dmg
+          cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
+          hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: watersortconfig-${{ matrix.arch }}
+          path: dist_${{ matrix.arch }}/*.dmg
+  
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.dmg
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
