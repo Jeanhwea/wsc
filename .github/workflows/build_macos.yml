@@ -64,6 +64,7 @@ jobs:
         with:
           # name: ${{ env.DMG_NAME }}
           path: dist_${{ matrix.arch }}/${{ env.DMG_NAME }}
+          compress: false
 
   release:
     needs: build
