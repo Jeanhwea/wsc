@@ -50,7 +50,6 @@ jobs:
         env:
           APP_NAME: "WaterSortTool"
           ARCH: "${{ matrix.arch }}"
-          GIT_TAG: "${{ github.ref_name }}"
           DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
         run: |
           ls -alh dist_${ARCH}
@@ -59,10 +58,12 @@ jobs:
           hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
 
       - name: Upload artifact
+        env:
+          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}.dmg"
         uses: actions/upload-artifact@v4
         with:
           name: WaterSortTool-${{ matrix.arch }}-${{ github.ref_name }}
-          path: dist_${{ matrix.arch }}/*.dmg
+          path: dist_${{ matrix.arch }}/${{ env.DMG_NAME }}
 
   release:
     needs: build
