@@ -39,8 +39,10 @@ jobs:
             --standalone \
             --macos-create-app-bundle \
             --macos-app-name="WaterSortTool" \
-            --enable-plugin=pyside6 \
+            --macos-signed-app-name="io.github.jeanhwea.wsc" \
+            --output-folder-name="WaterSortTool" \
             --output-dir=dist_${{ matrix.arch }} \
+            --enable-plugin=pyside6 \
             app.py
 
       - name: Create DMG
