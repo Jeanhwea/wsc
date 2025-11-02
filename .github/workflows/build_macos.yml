@@ -62,7 +62,7 @@ jobs:
           DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}.dmg"
         uses: actions/upload-artifact@v4
         with:
-          name: WaterSortTool-${{ matrix.arch }}-${{ github.ref_name }}
+          name: ${{ env.DMG_NAME }}
           path: dist_${{ matrix.arch }}/${{ env.DMG_NAME }}
 
   release:
