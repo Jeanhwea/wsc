@@ -39,16 +39,15 @@ jobs:
           python -m nuitka \
             --standalone \
             --macos-create-app-bundle \
-            --macos-app-name="WaterSortConfig" \
-            --macos-app-bundle-identifier="com.redinf.watersortconfig" \
+            --macos-app-name="WaterSortTool" \
+            --macos-app-bundle-identifier="io.jeanhwea.github.redinf.wsc" \
             --enable-plugin=pyside6 \
-            --include-data-dir=example=example \
             --output-dir=dist_${{ matrix.arch }} \
             app.py
       
       - name: Create DMG
         run: |
-          APP_NAME="WaterSortConfig"
+          APP_NAME="WaterSortTool"
           ARCH="${{ matrix.arch }}"
           DMG_NAME="${APP_NAME}_${ARCH}.dmg"
           
@@ -59,7 +58,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: watersortconfig-${{ matrix.arch }}
+          name: watersortTool-${{ matrix.arch }}
           path: dist_${{ matrix.arch }}/*.dmg
   
   release:
