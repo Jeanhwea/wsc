@@ -38,8 +38,9 @@ jobs:
           python -m nuitka \
             --standalone \
             --macos-create-app-bundle \
-            --macos-app-name="WaterSortTool" \
-            --macos-signed-app-name="io.github.jeanhwea.wsc" \
+            --macos-app-name=WaterSortTool \
+            --macos-app-icon=logo.png \
+            --macos-signed-app-name=io.github.jeanhwea.wsc \
             --output-folder-name="WaterSortTool" \
             --output-dir=dist_${{ matrix.arch }} \
             --enable-plugin=pyside6 \
