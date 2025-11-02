@@ -50,7 +50,7 @@ jobs:
           APP_NAME="WaterSortTool"
           ARCH="${{ matrix.arch }}"
           GIT_TAG="${{ github.ref_name }}"
-          DMG_NAME="${APP_NAME}_${ARCH}_${GIT_TAG}.dmg"
+          DMG_NAME="${APP_NAME}-${ARCH}-${GIT_TAG}.dmg"
           ls -alh dist_${ARCH}
           mkdir -p dist_${ARCH}/dmg
           cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
@@ -59,7 +59,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: watersortTool-${{ matrix.arch }}
+          name: WaterSortTool-${{ matrix.arch }}-"${{ github.ref_name }}"
           path: dist_${{ matrix.arch }}/*.dmg
 
   release:
