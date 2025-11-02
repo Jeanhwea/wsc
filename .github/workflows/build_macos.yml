@@ -46,11 +46,12 @@ jobs:
             app.py
 
       - name: Create DMG
+        env:
+          APP_NAME: "WaterSortTool"
+          ARCH: "${{ matrix.arch }}"
+          GIT_TAG: "${{ github.ref_name }}"
+          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
         run: |
-          APP_NAME="WaterSortTool"
-          ARCH="${{ matrix.arch }}"
-          GIT_TAG="${{ github.ref_name }}"
-          DMG_NAME="${APP_NAME}-${ARCH}-${GIT_TAG}.dmg"
           ls -alh dist_${ARCH}
           mkdir -p dist_${ARCH}/dmg
           cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
