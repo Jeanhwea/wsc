@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: macos-latest
+        os: [ macos-15 ]
         arch: [ x64, arm64 ]
     runs-on: ${{ matrix.os }}
     
