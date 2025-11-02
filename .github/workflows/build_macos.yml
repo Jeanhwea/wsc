@@ -49,7 +49,8 @@ jobs:
         run: |
           APP_NAME="WaterSortTool"
           ARCH="${{ matrix.arch }}"
-          DMG_NAME="${APP_NAME}_${ARCH}.dmg"
+          GIT_TAG="${{ github.ref_name }}"
+          DMG_NAME="${APP_NAME}_${ARCH}_${GIT_TAG}.dmg"
           
           mkdir -p dist_${ARCH}/dmg
           cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
