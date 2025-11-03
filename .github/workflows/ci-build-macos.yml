@@ -47,7 +47,6 @@ jobs:
             app.py
 
       - name: Create DMG
-        if: true
         env:
           APP_NAME: "WaterSortTool"
           ARCH: "${{ matrix.arch }}"
@@ -56,16 +55,15 @@ jobs:
           ls -alh dist_${ARCH}
           mkdir -p dist_${ARCH}/dmg
           cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
-          # hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
+          hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
 
       - name: Upload artifact
         env:
-          APP_DIST: "${{ format('dist_{0}/dmg/', matrix.arch, 'WaterSortTool') }}"
-          ZIP_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
+          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ZIP_NAME }}
-          path: ${{ env.APP_DIST }}
+          name: ${{ env.DMG_NAME }}
+          path: dist_${{ matrix.arch }}/${{ env.DMG_NAME }}.dmg
 
   release:
     needs: build
@@ -86,7 +84,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.zip
+          files: artifacts/*.dmg
           draft: false
           prerelease: false
           generate_release_notes: true
