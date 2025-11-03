@@ -79,11 +79,16 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      - name: List downloaded artifacts
+        run: |
+          ls -la artifacts/
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: WaterSortTool-*
+          files: artifacts/*.zip
           draft: false
           prerelease: false
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
