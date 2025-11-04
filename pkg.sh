@@ -12,5 +12,5 @@ uv run python -m nuitka app.py
 
 # Create dmg volume
 mkdir -p ${DMG_DIR}
-mv output/${APP_PKG}.app ${DMG_DIR}
+mv ${OUT_DIR}/${APP_PKG}.app ${DMG_DIR}
 hdiutil create -volname ${APP_PKG} -srcfolder ${DMG_DIR} -ov -format UDZO ${DMG_IMG}
