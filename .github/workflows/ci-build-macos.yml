@@ -38,35 +38,12 @@ jobs:
       - name: Build with Nuitka
         run: |
           source .venv/bin/activate
-          python -m nuitka \
-            --standalone \
-            --macos-create-app-bundle \
-            --macos-app-name=WaterSortTool \
-            --macos-app-icon=logo.png \
-            --macos-signed-app-name=io.github.jeanhwea.wsc \
-            --output-folder-name="WaterSortTool" \
-            --output-dir=dist_${{ matrix.arch }} \
-            --enable-plugin=pyside6 \
-            app.py
-
-      - name: Create DMG
-        env:
-          APP_NAME: "WaterSortTool"
-          ARCH: "${{ matrix.arch }}"
-          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
-        run: |
-          ls -alh dist_${ARCH}
-          mkdir -p dist_${ARCH}/dmg
-          cp -R dist_${ARCH}/${APP_NAME}.app dist_${ARCH}/dmg/
-          hdiutil create -volname "${APP_NAME}" -srcfolder dist_${ARCH}/dmg -ov -format UDZO dist_${ARCH}/${DMG_NAME}
+          ./pkg.sh
 
       - name: Upload artifact
-        env:
-          DMG_NAME: "${{ format('{0}-{1}-{2}', 'WaterSortTool', matrix.arch, github.ref_name) }}"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.DMG_NAME }}
-          path: dist_${{ matrix.arch }}/${{ env.DMG_NAME }}.dmg
+          path: output/*.dmg
 
   release:
     needs: build
