@@ -1,4 +1,18 @@
 # -*- coding: utf-8 -*-
+# Compilation mode, support OS-specific options
+# nuitka-project: --enable-plugin=pyside6
+# nuitka-project-if: {OS} in ("Windows"):
+#    nuitka-project: --windows-console-mode=disable
+#    nuitka-project: --windows-icon-from-ico={MAIN_DIRECTORY}/logo.png
+# nuitka-project-if: {OS} in ("Darwin"):
+#    nuitka-project: --macos-create-app-bundle
+#    nuitka-project: --macos-signed-app-name=io.github.jeanhwea.wsc
+#    nuitka-project: --macos-app-name=WaterSortTool
+#    nuitka-project: --macos-app-icon={MAIN_DIRECTORY}/logo.png
+#    nuitka-project: --output-folder-name=WaterSortTool
+#    nuitka-project: --output-dir=output
+# nuitka-project-if: {OS} in ("Linux"):
+#    nuitka-project: --static-libpython=no
 import copy
 import enum
 import glob
