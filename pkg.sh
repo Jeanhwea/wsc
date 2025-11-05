@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
+set -eux
+
 APP_PKG=WaterSortTool
 GIT_TAG=$(git describe --tags --always --dirty="-dev")
 OUT_DIR=output
 OS_ARCH=$(uname -m)
 DMG_DIR=${OUT_DIR}/dmg
 DMG_IMG=${OUT_DIR}/${APP_PKG}-${OS_ARCH}-${GIT_TAG}.dmg
+
+# Clean old builds
+rm -rf ${OUT_DIR}
 
 # Build application
 # source .venv/bin/activate
