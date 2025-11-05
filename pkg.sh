@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 APP_PKG=WaterSortTool
-GIT_TAG=$(git describe --tags --always --dirty=dev)
+GIT_TAG=$(git describe --tags --always --dirty="-dev")
 OUT_DIR=output
 OS_ARCH=$(uname -m)
 DMG_DIR=${OUT_DIR}/dmg
