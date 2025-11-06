@@ -27,10 +27,11 @@ from typing import Any, Dict, List
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
-    QDoubleSpinBox,
     QComboBox,
+    QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
@@ -55,6 +56,10 @@ class PropKeyEnum(enum.StrEnum):
     G3_OPT_NUM = "G3_OPT_NUMBER"
     G4_FILE_01 = "G4_FILE_01"
     G4_INIT_SC = "G4_INIT_SCALE"
+    G4_ANI_TIM = "G4_ANI_TIME"
+    G4_ANI_DLY = "G4_ANI_DELAY"
+    G4_ANI_SC0 = "G4_ANI_SCALE_MIN"
+    G4_ANI_SC9 = "G4_ANI_SCALE_MAX"
     G5_FILE_01 = "G5_FILE_01"
     G5_IS_TUTR = "G5_IS_TUTOR"
     G5_YXP_DIR = "G5_YXP_DIR"
@@ -281,6 +286,52 @@ class JxDoubleSpinBox(QDoubleSpinBox):
 class JxRadioButton(QRadioButton):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class JxAnimationGrid(QWidget):
+    _layout: QGridLayout
+    valueChanged = Signal(PropKeyEnum, Any)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._layout = QGridLayout(self)
+        self.initUI()
+
+    def initUI(self):
+        layout = self._layout
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        layout.addWidget(QLabel("时长(秒)"), 0, 0)
+        edit01 = JxSpinBox(self)
+        edit01.setValue(_CONFIG_TEMPLATE["DownButtomInfo"]["aniTime"])
+        edit01.valueChanged.connect(lambda value, key=PropKeyEnum.G4_ANI_TIM: self._set_value(key, value))
+        layout.addWidget(edit01, 0, 1)
+
+        layout.addWidget(QLabel("间隔(秒)"), 0, 2)
+        edit02 = JxSpinBox(self)
+        edit02.setValue(_CONFIG_TEMPLATE["DownButtomInfo"]["delayTime"])
+        edit02.valueChanged.connect(lambda value, key=PropKeyEnum.G4_ANI_DLY: self._set_value(key, value))
+        layout.addWidget(edit02, 0, 3)
+
+        layout.addWidget(QLabel("开始大小"), 1, 0)
+        edit11 = JxDoubleSpinBox(self)
+        edit11.setValue(_CONFIG_TEMPLATE["DownButtomInfo"]["aniScale"][0])
+        edit11.valueChanged.connect(lambda value, key=PropKeyEnum.G4_ANI_SC0: self._set_value(key, value))
+        layout.addWidget(edit11, 1, 1)
+
+        layout.addWidget(QLabel("结束大小"), 1, 2)
+        edit13 = JxDoubleSpinBox(self)
+        edit13.setValue(_CONFIG_TEMPLATE["DownButtomInfo"]["aniScale"][1])
+        edit13.valueChanged.connect(lambda value, key=PropKeyEnum.G4_ANI_SC9: self._set_value(key, value))
+        layout.addWidget(edit13, 1, 3)
+
+        layout.setColumnStretch(0, 1)
+        layout.setColumnStretch(1, 3)
+        layout.setColumnStretch(2, 1)
+        layout.setColumnStretch(3, 3)
+
+    def _set_value(self, key: PropKeyEnum, value: Any):
+        self.valueChanged.emit(key, value)
 
 
 class DataCollector:
@@ -703,6 +754,10 @@ class WaterSortConfigWidget(QWidget):
         edit02.setValue(_CONFIG_TEMPLATE["DownButtomInfo"]["scale"])
         edit02.valueChanged.connect(lambda value, key=PropKeyEnum.G4_INIT_SC: self._set_props(key, value))
         layout.addRow("初始大小", edit02)
+
+        grid01 = JxAnimationGrid(self)
+        grid01.valueChanged.connect(lambda key, value: self._set_props(key, value))
+        layout.addRow("呼吸动画", grid01)
 
         return group
 
