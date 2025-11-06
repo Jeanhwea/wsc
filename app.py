@@ -24,7 +24,7 @@ import shutil
 import sys
 from typing import Any, Dict, List
 
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -39,6 +39,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QRadioButton,
+    QSizePolicy,
     QSpinBox,
     QVBoxLayout,
     QWidget,
@@ -770,7 +771,10 @@ class WaterSortConfigWidget(QWidget):
 
         grid01 = JxAnimationGrid(self)
         grid01.valueChanged.connect(lambda key, value: self._set_props(key, value))
-        layout.addRow("呼吸动画", grid01)
+        label = QLabel("呼吸动画")
+        label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        layout.addRow(label, grid01)
 
         return group
 
