@@ -53,10 +53,10 @@ class PropKeyEnum(enum.StrEnum):
     G3_OPT_TYP = "G3_OPT_TYPE"
     G3_OPT_NUM = "G3_OPT_NUMBER"
     G4_FILE_01 = "G4_FILE_01"
-    G4_FILE_02 = "G4_FILE_02"
-    G4_IS_TUTR = "G4_IS_TUTOR"
-    G4_YXP_DIR = "G4_YXP_DIR"
-    G4_FILE_04 = "G4_FILE_04"
+    G5_FILE_01 = "G5_FILE_01"
+    G5_IS_TUTR = "G5_IS_TUTOR"
+    G5_YXP_DIR = "G5_YXP_DIR"
+    G5_FILE_04 = "G5_FILE_04"
 
 
 class YxpSuffixEnum(enum.StrEnum):
@@ -284,8 +284,8 @@ class DataCollector:
         PropKeyEnum.G2_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['levle']}",
         PropKeyEnum.G2_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['levle']}",
         PropKeyEnum.G2_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['levle']}",
-        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}",
-        PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}",
+        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}",
+        PropKeyEnum.G5_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}",
     }
 
     _ASSET_LIST = {
@@ -295,9 +295,9 @@ class DataCollector:
         PropKeyEnum.G2_FILE_01: f"lv{_CONFIG_TEMPLATE['LevelData'][0]['levle']}.json",
         PropKeyEnum.G2_FILE_02: f"lv{_CONFIG_TEMPLATE['LevelData'][1]['levle']}.json",
         PropKeyEnum.G2_FILE_03: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
-        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}.png",
-        PropKeyEnum.G4_FILE_02: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
-        PropKeyEnum.G4_FILE_04: f"SodaSorting_pic_bg_1.jpg",
+        PropKeyEnum.G4_FILE_01: f"{_CONFIG_TEMPLATE['DownButtomInfo']['imageUrl']}.png",
+        PropKeyEnum.G5_FILE_01: f"{_CONFIG_TEMPLATE['ResultJumpImageURL']}.png",
+        PropKeyEnum.G5_FILE_04: f"SodaSorting_pic_bg_1.jpg",
     }
 
     _ASSET_YXP_FILES = {
@@ -316,9 +316,9 @@ class DataCollector:
         PropKeyEnum.G2_FILE_03: "2. 关卡文件/关卡3",
         PropKeyEnum.G3_OPT_TYP: "3. 最后一关的结束条件/结束条件类型",
         PropKeyEnum.G3_OPT_NUM: "3. 最后一关的结束条件/n 值",
-        PropKeyEnum.G4_FILE_01: "4. 其他确认项/结束页",
-        PropKeyEnum.G4_FILE_02: "4. 其他确认项/下载按钮图片",
-        PropKeyEnum.G4_IS_TUTR: "4. 其他确认项/是否有新手",
+        PropKeyEnum.G4_FILE_01: "4. 下载按钮/下载按钮图片",
+        PropKeyEnum.G5_FILE_01: "5. 其他确认项/结束页",
+        PropKeyEnum.G5_IS_TUTR: "5. 其他确认项/是否有新手",
     }
 
     _CHAR_ALPHABETA = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -398,7 +398,7 @@ class DataCollector:
         return glob.glob(glob_pattern)
 
     def check_yxp_folder(self, props: Dict[PropKeyEnum, Any]):
-        folder = props.get(PropKeyEnum.G4_YXP_DIR, "")
+        folder = props.get(PropKeyEnum.G5_YXP_DIR, "")
 
         if len(folder) == 0:
             return True
@@ -535,18 +535,18 @@ class DataCollector:
 
         exp_config["ResultJumpType"] = f"{props.get(PropKeyEnum.G3_OPT_TYP, LastLevelCondEnum.E00)}"
         exp_config["ResultJumpNumber"] = props.get(PropKeyEnum.G3_OPT_NUM, 0)
-        exp_config["ResultJumpImageURL"] = self.get_path_value(props, PropKeyEnum.G4_FILE_01)
+        exp_config["ResultJumpImageURL"] = self.get_path_value(props, PropKeyEnum.G5_FILE_01)
 
-        exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_02)
-        exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G4_IS_TUTR, True)
+        exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_01)
+        exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G5_IS_TUTR, True)
 
-        exp_config["md5"] = self.calc_my_md5_checksum(props.get(PropKeyEnum.G4_FILE_02, ""))
+        exp_config["md5"] = self.calc_my_md5_checksum(props.get(PropKeyEnum.G4_FILE_01, ""))
 
         with open(config_file, "w") as f:
             json.dump(exp_config, f, indent=4, ensure_ascii=False)
 
     def store_yxp_files(self, props: Dict[PropKeyEnum, Any], target_dir: str):
-        src_dir = props.get(PropKeyEnum.G4_YXP_DIR, "")
+        src_dir = props.get(PropKeyEnum.G5_YXP_DIR, "")
         if not os.path.exists(src_dir):
             return
 
@@ -609,6 +609,7 @@ class WaterSortConfigWidget(QWidget):
         layout.addWidget(self._init_group_02())
         layout.addWidget(self._init_group_03())
         layout.addWidget(self._init_group_04())
+        layout.addWidget(self._init_group_05())
 
         layout.addStretch()
         layout.addLayout(self._init_operation_area())
@@ -681,35 +682,42 @@ class WaterSortConfigWidget(QWidget):
         return group
 
     def _init_group_04(self):
-        group = QGroupBox("4. 其他确认项")
+        group = QGroupBox("4. 下载按钮")
+        layout = QFormLayout(parent=group)
+
+        edit02 = JxFileLocationEdit(suffix="png", parent=self)
+        edit02.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G4_FILE_01: self._set_props(key, value)
+        )
+        layout.addRow("下载按钮图片", edit02)
+
+        return group
+
+    def _init_group_05(self):
+        group = QGroupBox("5. 其他确认项")
         layout = QFormLayout(parent=group)
 
         edit01 = JxFileLocationEdit(suffix="png", parent=self)
         edit01.locationChanged.connect(
-            lambda value, key=PropKeyEnum.G4_FILE_01: self._set_props(key, value)
+            lambda value, key=PropKeyEnum.G5_FILE_01: self._set_props(key, value)
         )
         layout.addRow("结束页", edit01)
 
-        edit02 = JxFileLocationEdit(suffix="png", parent=self)
-        edit02.locationChanged.connect(
-            lambda value, key=PropKeyEnum.G4_FILE_02: self._set_props(key, value)
-        )
-        layout.addRow("下载按钮图片", edit02)
 
         check = JxRadioButton(parent=self)
-        check.clicked.connect(lambda state, key=PropKeyEnum.G4_IS_TUTR: self._set_props(key, value=state))
+        check.clicked.connect(lambda state, key=PropKeyEnum.G5_IS_TUTR: self._set_props(key, value=state))
         check.setChecked(True)
         layout.addRow("是否有新手", check)
 
         edit03 = JxFileLocationEdit(choose_dir=True, parent=self)
         edit03.locationChanged.connect(
-            lambda value, key=PropKeyEnum.G4_YXP_DIR: self._set_props(key, value)
+            lambda value, key=PropKeyEnum.G5_YXP_DIR: self._set_props(key, value)
         )
         layout.addRow("异形瓶文件夹", edit03)
 
         edit04 = JxFileLocationEdit(suffix="jpg", parent=self)
         edit04.locationChanged.connect(
-            lambda value, key=PropKeyEnum.G4_FILE_04: self._set_props(key, value)
+            lambda value, key=PropKeyEnum.G5_FILE_04: self._set_props(key, value)
         )
         layout.addRow("背景图", edit04)
 
