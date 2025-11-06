@@ -27,6 +27,7 @@ from typing import Any, Dict, List
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QApplication,
+    QDoubleSpinBox,
     QComboBox,
     QFileDialog,
     QFormLayout,
@@ -53,6 +54,7 @@ class PropKeyEnum(enum.StrEnum):
     G3_OPT_TYP = "G3_OPT_TYPE"
     G3_OPT_NUM = "G3_OPT_NUMBER"
     G4_FILE_01 = "G4_FILE_01"
+    G4_INIT_SC = "G4_INIT_SCALE"
     G5_FILE_01 = "G5_FILE_01"
     G5_IS_TUTR = "G5_IS_TUTOR"
     G5_YXP_DIR = "G5_YXP_DIR"
@@ -100,10 +102,10 @@ _CONFIG_TEMPLATE = {
     "ResultJumpImageURL": "WinBg",
     "DownButtomInfo": {
         "imageUrl": "DownButtomBg",
-        "scale": 1,
-        "aniTime": 1,
-        "delayTime": 1,
-        "aniScale": [1, 1.3],
+        "scale": 1.8,
+        "aniTime": 0,
+        "delayTime": 0,
+        "aniScale": [1, 1],
     },
     "IsOpenTutorial": True,
     "md5": "",
@@ -267,6 +269,11 @@ class JxMessageBox(QMessageBox):
 
 
 class JxSpinBox(QSpinBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class JxDoubleSpinBox(QDoubleSpinBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -685,11 +692,17 @@ class WaterSortConfigWidget(QWidget):
         group = QGroupBox("4. 下载按钮")
         layout = QFormLayout(parent=group)
 
-        edit02 = JxFileLocationEdit(suffix="png", parent=self)
-        edit02.locationChanged.connect(
+        edit01 = JxFileLocationEdit(suffix="png", parent=self)
+        edit01.locationChanged.connect(
             lambda value, key=PropKeyEnum.G4_FILE_01: self._set_props(key, value)
         )
-        layout.addRow("下载按钮图片", edit02)
+        layout.addRow("按钮图片", edit01)
+
+        edit02 = JxDoubleSpinBox(self)
+        edit02.setRange(0, 10)
+        edit02.setValue(_CONFIG_TEMPLATE["DownButtomInfo"]["scale"])
+        edit02.valueChanged.connect(lambda value, key=PropKeyEnum.G4_INIT_SC: self._set_props(key, value))
+        layout.addRow("初始大小", edit02)
 
         return group
 
@@ -702,7 +715,6 @@ class WaterSortConfigWidget(QWidget):
             lambda value, key=PropKeyEnum.G5_FILE_01: self._set_props(key, value)
         )
         layout.addRow("结束页", edit01)
-
 
         check = JxRadioButton(parent=self)
         check.clicked.connect(lambda state, key=PropKeyEnum.G5_IS_TUTR: self._set_props(key, value=state))
