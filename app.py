@@ -596,6 +596,19 @@ class DataCollector:
         exp_config["ResultJumpImageURL"] = self.get_path_value(props, PropKeyEnum.G5_FILE_01)
 
         exp_config["DownButtomInfo"]["imageUrl"] = self.get_path_value(props, PropKeyEnum.G4_FILE_01)
+        exp_config["DownButtomInfo"]["scale"] = props.get(
+            PropKeyEnum.G4_INIT_SC, _CONFIG_TEMPLATE["DownButtomInfo"]["scale"]
+        )
+        exp_config["DownButtomInfo"]["aniTime"] = props.get(
+            PropKeyEnum.G4_ANI_TIM, _CONFIG_TEMPLATE["DownButtomInfo"]["aniTime"]
+        )
+        exp_config["DownButtomInfo"]["delayTime"] = props.get(
+            PropKeyEnum.G4_ANI_DLY, _CONFIG_TEMPLATE["DownButtomInfo"]["delayTime"]
+        )
+        exp_config["DownButtomInfo"]["aniScale"] = [
+            props.get(PropKeyEnum.G4_ANI_SC0, _CONFIG_TEMPLATE["DownButtomInfo"]["aniScale"][0]),
+            props.get(PropKeyEnum.G4_ANI_SC9, _CONFIG_TEMPLATE["DownButtomInfo"]["aniScale"][1]),
+        ]
         exp_config["IsOpenTutorial"] = props.get(PropKeyEnum.G5_IS_TUTR, True)
 
         exp_config["md5"] = self.calc_my_md5_checksum(props.get(PropKeyEnum.G4_FILE_01, ""))
