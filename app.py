@@ -5,6 +5,7 @@
 #    nuitka-project: --windows-console-mode=disable
 #    nuitka-project: --windows-icon-from-ico={MAIN_DIRECTORY}/logo.png
 # nuitka-project-if: {OS} in ("Darwin"):
+#    nuitka-project: --standalone
 #    nuitka-project: --macos-create-app-bundle
 #    nuitka-project: --macos-signed-app-name=io.github.jeanhwea.wsc
 #    nuitka-project: --macos-app-name=WaterSortTool
