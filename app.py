@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Compilation mode, support OS-specific options
-# nuitka-project: --enable-plugin=pyside6
+#    nuitka-project: --enable-plugin=pyside6
 # nuitka-project-if: {OS} in ("Windows"):
 #    nuitka-project: --windows-console-mode=disable
 #    nuitka-project: --windows-icon-from-ico={MAIN_DIRECTORY}/logo.png
@@ -13,6 +13,7 @@
 #    nuitka-project: --output-dir=output
 # nuitka-project-if: {OS} in ("Linux"):
 #    nuitka-project: --static-libpython=no
+#
 import copy
 import enum
 import glob
