@@ -44,6 +44,7 @@ build_one() {
   eval "$PY -m PyInstaller \
     --name=\"$APP_NAME\" \
     --windowed \
+    -i logo.png \
     --clean \
     --noconsole \
     --add-data=\"requirements.txt:.\" \
