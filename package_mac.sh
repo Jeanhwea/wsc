@@ -3,7 +3,7 @@
 # WaterSortTool 打包脚本（macOS）
 
 APP_NAME="WaterSortTool"
-VERSION="1.0.0"
+VERSION=$(git describe --tags --always --dirty="-dev")
 
 # 创建输出目录
 OUTPUT_DIR="output"
@@ -28,6 +28,7 @@ fi
 echo "正在打包应用..."
 pyinstaller  --name="$APP_NAME" \
     --windowed \
+    -i logo.png \
     --clean \
     --noconsole \
     --add-data="requirements.txt:." \
