@@ -52,6 +52,7 @@ class PropKeyEnum(enum.StrEnum):
     G1_FILE_01 = "G1_PNG_01"
     G1_FILE_02 = "G1_PNG_02"
     G1_FILE_03 = "G1_PNG_03"
+    G1_IMG_DIR = "G1_IMG_DIR"
     G2_FILE_01 = "G2_JSON_F01"
     G2_FILE_02 = "G2_JSON_F02"
     G2_FILE_03 = "G2_JSON_F03"
@@ -100,9 +101,21 @@ _LAST_OPEN_DIR = None
 
 _CONFIG_TEMPLATE = {
     "LevelData": [
-        {"id": 1, "levle": "1-1", "titleImage": "TitleBg1"},
-        {"id": 2, "levle": "2-1", "titleImage": "TitleBg2"},
-        {"id": 3, "levle": "3-1", "titleImage": "TitleBg3"},
+        {
+            "id": 1,
+            "levle": "1-1",
+            # "titleImage": "TitleBg1",
+        },
+        {
+            "id": 2,
+            "levle": "2-1",
+            # "titleImage": "TitleBg2",
+        },
+        {
+            "id": 3,
+            "levle": "3-1",
+            # "titleImage": "TitleBg3",
+        },
     ],
     "LevelLength": 3,
     "ResultJumpType": "0",
@@ -339,9 +352,9 @@ class JxAnimationGrid(QWidget):
 
 class DataCollector:
     _ASSET_INIT = {
-        PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}",
-        PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}",
-        PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}",
+        # PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}",
+        # PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}",
+        # PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}",
         PropKeyEnum.G2_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['levle']}",
         PropKeyEnum.G2_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['levle']}",
         PropKeyEnum.G2_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['levle']}",
@@ -350,9 +363,9 @@ class DataCollector:
     }
 
     _ASSET_LIST = {
-        PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
-        PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
-        PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}.png",
+        # PropKeyEnum.G1_FILE_01: f"{_CONFIG_TEMPLATE['LevelData'][0]['titleImage']}.png",
+        # PropKeyEnum.G1_FILE_02: f"{_CONFIG_TEMPLATE['LevelData'][1]['titleImage']}.png",
+        # PropKeyEnum.G1_FILE_03: f"{_CONFIG_TEMPLATE['LevelData'][2]['titleImage']}.png",
         PropKeyEnum.G2_FILE_01: f"lv{_CONFIG_TEMPLATE['LevelData'][0]['levle']}.json",
         PropKeyEnum.G2_FILE_02: f"lv{_CONFIG_TEMPLATE['LevelData'][1]['levle']}.json",
         PropKeyEnum.G2_FILE_03: f"lv{_CONFIG_TEMPLATE['LevelData'][2]['levle']}.json",
@@ -369,9 +382,10 @@ class DataCollector:
     }
 
     _ERROR_MSG = {
-        PropKeyEnum.G1_FILE_01: "1. 标题图片/关卡1",
-        PropKeyEnum.G1_FILE_02: "1. 标题图片/关卡2",
-        PropKeyEnum.G1_FILE_03: "1. 标题图片/关卡3",
+        # PropKeyEnum.G1_FILE_01: "1. 标题图片/关卡1",
+        # PropKeyEnum.G1_FILE_02: "1. 标题图片/关卡2",
+        # PropKeyEnum.G1_FILE_03: "1. 标题图片/关卡3",
+        PropKeyEnum.G1_IMG_DIR: "1. 标题图片/多语言标题",
         PropKeyEnum.G2_FILE_01: "2. 关卡文件/关卡1",
         PropKeyEnum.G2_FILE_02: "2. 关卡文件/关卡2",
         PropKeyEnum.G2_FILE_03: "2. 关卡文件/关卡3",
@@ -689,6 +703,18 @@ class WaterSortConfigWidget(QWidget):
         layout.addLayout(self._init_operation_area())
 
     def _init_group_01(self):
+        group = QGroupBox("1. 标题图片")
+        layout = QFormLayout(parent=group)
+
+        edit01 = JxFileLocationEdit(choose_dir=True, parent=self)
+        edit01.locationChanged.connect(
+            lambda value, key=PropKeyEnum.G1_IMG_DIR: self._set_props(key, value)
+        )
+        layout.addRow("多语言标题", edit01)
+
+        return group
+
+    def _init_group_01_v0(self):
         group = QGroupBox("1. 标题图片")
         layout = QFormLayout(parent=group)
 
