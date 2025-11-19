@@ -503,6 +503,24 @@ class DataCollector:
 
         return True
 
+    def check_multi_lang_folder(self, props: Dict[PropKeyEnum, Any]):
+        folder = props.get(PropKeyEnum.G1_IMG_DIR, "")
+        if len(folder) == 0:
+            return True
+
+        if not os.path.exists(folder):
+            JxMessageBox.warn(f"多语言标题文件夹【{folder} 】已删除")
+            return False
+
+        png_files = self._list_glob_files(folder, "png")
+        all_files = set(_CONFIG_TEMPLATE["titleImageMultiLanguage"].values())
+        for f in png_files:
+            if f not in all_files:
+                JxMessageBox.warn(f"多语言标题文件夹【{folder} 】已删除")
+                return False
+
+        return True
+
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
         if not self.check_n_value(props):
             return False
@@ -520,6 +538,9 @@ class DataCollector:
             return False
 
         if not self.check_yxp_folder(props):
+            return False
+
+        if not self.check_multi_lang_folder(props):
             return False
 
         return True
