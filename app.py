@@ -72,7 +72,7 @@ class PropKeyEnum(enum.StrEnum):
 class YxpSuffixEnum(enum.StrEnum):
     SKEL = "skel"
     ATLAS = "atlas"
-    PNG = "png"
+    WEBP = "webp"
     CSV = "csv"
 
 
@@ -364,7 +364,7 @@ class DataCollector:
     _ASSET_YXP_FILES = {
         YxpSuffixEnum.SKEL: f"心形瓶子_接水.{YxpSuffixEnum.SKEL}",
         YxpSuffixEnum.ATLAS: f"心形瓶子_接水.{YxpSuffixEnum.ATLAS}",
-        YxpSuffixEnum.PNG: f"心形瓶子_接水.{YxpSuffixEnum.PNG}",
+        YxpSuffixEnum.WEBP: f"心形瓶子_接水.{YxpSuffixEnum.WEBP}",
         YxpSuffixEnum.CSV: f"SpecialBottleConfig.{YxpSuffixEnum.CSV}",
     }
 
@@ -633,8 +633,8 @@ class DataCollector:
             )
 
         altla_file = os.path.join(target_dir, self._ASSET_YXP_FILES[YxpSuffixEnum.ATLAS])
-        png_name = self._ASSET_YXP_FILES[YxpSuffixEnum.PNG]
-        self._replace_atlas_png_file(altla_file, altla_file, png_name)
+        webp_name = self._ASSET_YXP_FILES[YxpSuffixEnum.WEBP]
+        self._replace_atlas_png_file(altla_file, altla_file, webp_name)
 
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         for key, value in self._ASSET_LIST.items():
