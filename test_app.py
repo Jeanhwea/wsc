@@ -28,3 +28,9 @@ class TestDartBalloonGame(TestCase):
         atlas_files = DataCollector._list_glob_files(src_dir, "atlas")
         print(atlas_files)
         self.assertEqual(1, len(atlas_files))
+
+    def test_list_multi_files(self):
+        src_dir = "./example/多语言标题"
+        atlas_files = DataCollector._list_glob_files(src_dir, "png")
+        print(atlas_files)
+        self.assertEqual(4, len(atlas_files))
