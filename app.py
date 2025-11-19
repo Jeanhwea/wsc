@@ -543,7 +543,7 @@ class DataCollector:
         return count
 
     @staticmethod
-    def _replace_atlas_png_file(src: str, dst: str, png_name: str):
+    def _replace_atlas_webp_file(src: str, dst: str, webp_name: str):
         if src is None or not os.path.exists(src):
             return ""
 
@@ -551,7 +551,7 @@ class DataCollector:
             text = f.read().lstrip()
 
         lines = text.splitlines()
-        lines[0] = png_name
+        lines[0] = webp_name
         text = "\n".join(lines)
 
         with open(dst, "w", encoding="utf-8") as f:
@@ -634,7 +634,7 @@ class DataCollector:
 
         altla_file = os.path.join(target_dir, self._ASSET_YXP_FILES[YxpSuffixEnum.ATLAS])
         webp_name = self._ASSET_YXP_FILES[YxpSuffixEnum.WEBP]
-        self._replace_atlas_png_file(altla_file, altla_file, webp_name)
+        self._replace_atlas_webp_file(altla_file, altla_file, webp_name)
 
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         for key, value in self._ASSET_LIST.items():
