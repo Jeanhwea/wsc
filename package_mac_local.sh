@@ -12,12 +12,11 @@ rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
 # ARM64 Conda 解释器
-PY_ARM="/Users/a/miniconda3/envs/diff/bin/python"
+PY_ARM="/opt/miniconda3/envs/diff/bin/python"
 # X86_64 Conda 解释器
-PY_X86="/Users/a/miniforge3/envs/py311_x86/bin/python"
+PY_X86="/Users/cyan/Envs/conda_x86/miniconda3/envs/patch/bin/python"
 # 如需强制经 Rosetta 启动，也可写成：
-# PY_X86="arch -x86_64 /Users/a/miniforge3/envs/py311_x86/bin/python"
-
+# PY_X86="arch -x86_64 /opt/miniforge3/envs/py311_x86/bin/python"
 # ========== 打包函数 ==========
 build_one() {
   local ARCH_LABEL="$1"      # mac-arm64 / mac-x86_64
