@@ -520,6 +520,15 @@ class DataCollector:
                 JxMessageBox.warn(f"请处理多余文件【{f} 】后再重试")
                 return False
 
+        my_files = set([os.path.basename(f) for f in png_files])
+        miss_files = []
+        for f in all_files:
+            if f not in my_files:
+                miss_files.append(f)
+
+        if len(miss_files) > 0:
+            JxMessageBox.warn(f"缺少 {len(miss_files)} 个语言标题文件【{','.join(miss_files)}】")
+
         return True
 
     def sanity_check(self, props: Dict[PropKeyEnum, Any]):
@@ -634,9 +643,9 @@ class DataCollector:
         config_file = os.path.join(target_dir, "GameConfig.json")
         exp_config = copy.deepcopy(_CONFIG_TEMPLATE)
 
-        exp_config["LevelData"][0]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_01)
-        exp_config["LevelData"][1]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_02)
-        exp_config["LevelData"][2]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_03)
+        # exp_config["LevelData"][0]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_01)
+        # exp_config["LevelData"][1]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_02)
+        # exp_config["LevelData"][2]["titleImage"] = self.get_path_value(props, PropKeyEnum.G1_FILE_03)
         exp_config["LevelLength"] = self.get_level_count(props)
 
         exp_config["LevelData"][0]["levle"] = self.get_path_value(props, PropKeyEnum.G2_FILE_01)
@@ -665,7 +674,7 @@ class DataCollector:
 
         exp_config["md5"] = self.calc_my_md5_checksum(props.get(PropKeyEnum.G4_FILE_01, ""))
 
-        with open(config_file, "w") as f:
+        with open(config_file, "w", encoding="utf-8") as f:
             json.dump(exp_config, f, indent=4, ensure_ascii=False)
 
     def store_yxp_files(self, props: Dict[PropKeyEnum, Any], target_dir: str):
@@ -685,6 +694,12 @@ class DataCollector:
         webp_name = self._ASSET_YXP_FILES[YxpSuffixEnum.WEBP]
         self._replace_atlas_webp_file(altla_file, altla_file, webp_name)
 
+    def store_multi_lang(self, props: Dict[PropKeyEnum, Any], target_dir: str):
+        folder = props.get(PropKeyEnum.G1_IMG_DIR, "")
+        png_files = self._list_glob_files(folder, "png")
+        for png_file in png_files:
+            self.copy_file(source=png_file, target_dir=target_dir, name=os.path.basename(png_file))
+
     def store_assets(self, props: Dict[PropKeyEnum, Any], target_dir: str):
         for key, value in self._ASSET_LIST.items():
             self.copy_file(
@@ -694,6 +709,7 @@ class DataCollector:
             )
 
         self.store_yxp_files(props, target_dir)
+        self.store_multi_lang(props, target_dir)
         self.store_config(props, target_dir)
 
     def export(self, props: Dict[PropKeyEnum, Any]):
