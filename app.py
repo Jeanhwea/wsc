@@ -513,9 +513,10 @@ class DataCollector:
             return False
 
         png_files = self._list_glob_files(folder, "png")
-        all_files = set(_CONFIG_TEMPLATE["titleImageMultiLanguage"].values())
+        all_files = set([f"{v}.png" for _, v in _CONFIG_TEMPLATE["titleImageMultiLanguage"].items()])
         for f in png_files:
-            if f not in all_files:
+            name = os.path.basename(f)
+            if name not in all_files:
                 JxMessageBox.warn(f"请处理多余文件【{f} 】后再重试")
                 return False
 
