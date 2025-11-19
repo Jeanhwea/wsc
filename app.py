@@ -516,7 +516,7 @@ class DataCollector:
         all_files = set(_CONFIG_TEMPLATE["titleImageMultiLanguage"].values())
         for f in png_files:
             if f not in all_files:
-                JxMessageBox.warn(f"多语言标题文件夹【{folder} 】已删除")
+                JxMessageBox.warn(f"请处理多余文件【{f} 】后再重试")
                 return False
 
         return True
