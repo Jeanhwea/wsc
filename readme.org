@@ -1,17 +1,12 @@
-#+TITLE: 水排序工具需求文档
+#+TITLE: 水排序工具
 #+AUTHOR: Jinghui Hu
 #+EMAIL: hujinghui@buaa.edu.cn
-#+DATE: <2025-10-28 Tue>
+#+DATE: <2025-11-21 Fri>
 #+STARTUP: overview num indent
 #+OPTIONS: ^:nil
 
 
-* 文档
-1. 需求文档 | [[https://t7le908iko.feishu.cn/docx/LEa7dDrUzo2mXrxB5buck3d3n6g][【251027】水排序工具需求文档]]
-2. 二期需求 | [[https://t7le908iko.feishu.cn/docx/WyPqdt1TJo21GSxofdicuLngnCc][【251028】水排序工具需求文档-2期]]
-3. 三期需求 | [[https://t7le908iko.feishu.cn/wiki/DB0FwGRQSiutX5kEX3Bcts41njb][【251031】水排序工具需求文档-3期]]
-4. 四期需求 | [[https://t7le908iko.feishu.cn/docx/FjfadaheHofBedxrZrdc0LBfnCd][【251106】水排序工具需求文档-4期]]
-
 * 发布
 1. <2025-11-05 Wed> 完成项目结题
 2. <2025-11-06 Thu> 开始四期
+3. <2025-11-19 Wed> 修改关卡图片逻辑
